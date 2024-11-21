@@ -59,7 +59,6 @@ export default function AdminLayout({ children, params }: AdminLayoutProps) {
 			return newDarkMode;
 		});
 	};
-	redirect("./admin/dashboard");
 	return (
 		<div className="flex h-screen">
 			<Sidebar toggleDarkMode={toggleDarkMode} />
