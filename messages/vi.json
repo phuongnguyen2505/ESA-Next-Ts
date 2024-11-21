@@ -1,0 +1,46 @@
+{
+	"home": {
+		"homepage": "Trang chủ",
+		"aboutus": "Giới Thiệu",
+		"products": "Sản Phẩm",
+		"services": "Dịch Vụ",
+		"news": "Tin Tức",
+		"contact": "Liên Hệ",
+
+		"vn": "Tiếng Việt",
+		"en": "Tiếng Anh"
+	},
+	"admin": {
+		"vn": "Tiếng Việt",
+		"en": "Tiếng Anh",
+
+		"dashboard": "Dashboard",
+		"aboutus": "Giới Thiệu",
+		"products": "Sản Phẩm",
+		"services": "Dịch Vụ",
+		"news": "Tin Tức",
+		"contact": "Liên Hệ",
+		"setting": "Cấu Hình",
+		"edit": "Chỉnh Sửa",
+		"add": "Thêm Mới",
+		"delete": "Xóa",
+		"save": "Lưu",
+		"cancel": "Hủy",
+		"upload": "Tải lên",
+		"preview": "Xem trước",
+		"uploadImage": "Tải lên ảnh",
+		"uploadFile": "Tải lên file",
+		"show": "Hiển thị",
+		"hide": "Ẩn",
+		"thumbnail": "Hình ảnh thu nhỏ",
+		"picture": "Hình ảnh",
+		"original": "Hình ảnh gốc",
+		"content": "Nội dung",
+		"title": "Tiêu đề",
+		"description": "Mô tả",
+		"name": "Tên",
+		"unaccentedName": "Tên không dấu",
+		"keywords": "Keywords"
+	}
+
+}

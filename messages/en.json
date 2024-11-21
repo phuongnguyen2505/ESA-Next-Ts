@@ -1,0 +1,45 @@
+{
+	"home": {
+		"homepage": "Home",
+		"aboutus": "About Us",
+		"products": "Products",
+		"services": "Services",
+		"news": "News",
+		"contact": "Contact",
+
+		"vn": "Vietnamese",
+		"en": "English"
+	},
+	"admin": {
+		"vn": "Vietnamese",
+		"en": "English",
+
+		"dashboard": "Dashboard",
+		"aboutus": "About Us",
+		"products": "Products",
+		"services": "Services",
+		"news": "News",
+		"contact": "Contact",
+		"setting": "Setting",
+		"edit": "Edit",
+		"add": "Add",
+		"delete": "Delete",
+		"save": "Save",
+		"cancel": "Cancel",
+		"upload": "Upload",
+		"preview": "Preview",
+		"uploadImage": "Upload Image",
+		"uploadFile": "Upload File",
+		"show": "Show",
+		"hide": "Hide",
+		"thumbnail": "Thumbnail",
+		"picture": "Picture",
+		"original": "Original",
+		"content": "Content",
+		"title": "Title",
+		"description": "Description",
+		"name": "Name",
+		"unaccentedName": "Unaccented Name",
+		"keywords": "Keywords"
+	}
+}
