@@ -148,7 +148,7 @@ export default function AboutUs() {
 
 	return (
 		<AdminLayout pageName={t("aboutus")}>
-			<div className="w-full h-[75vh] overflow-y-auto px-4 dark:bg-gray-800">
+			<div className="w-full h-[75vh] overflow-y-auto px-4 dark:bg-gray-800 scrollbar">
 				{/* Alert */}
 				{alert && <Alert message={alert.message} type={alert.type} />}
 
@@ -167,6 +167,8 @@ export default function AboutUs() {
 									title={t("name")}
 									value={abouts.ten_vi}
 									onChange={handleChange}
+									language={t("vn")}
+									placeholder={t("name")}
 								/>
 							</div>
 							<div>
@@ -176,6 +178,7 @@ export default function AboutUs() {
 									value={abouts.mota_vi}
 									onChange={handleChange}
 									language={t("vn")}
+									placeholder={t("description")}
 								/>
 							</div>
 							<div>
@@ -198,6 +201,7 @@ export default function AboutUs() {
 										title={t("title") + " SEO"}
 										value={abouts.title_vi}
 										onChange={handleChange}
+										placeholder={t("title") + " SEO"}
 									/>
 								</div>
 								<div>
@@ -205,6 +209,7 @@ export default function AboutUs() {
 										title={t("keywords") + " SEO"}
 										value={abouts.keywords_vi}
 										onChange={handleChange}
+										placeholder={t("keywords") + " SEO"}
 									/>
 								</div>
 								<div>
@@ -214,6 +219,7 @@ export default function AboutUs() {
 										value={abouts.description_vi}
 										onChange={handleChange}
 										language={t("vn")}
+										placeholder={t("description") + " SEO"}
 									/>
 								</div>
 							</div>
@@ -226,8 +232,10 @@ export default function AboutUs() {
 							<div>
 								<InputSm
 									title={t("name")}
+									language={t("en")}
 									value={abouts.ten_en}
 									onChange={handleChange}
+									placeholder={t("name")}
 								/>
 							</div>
 
@@ -235,6 +243,7 @@ export default function AboutUs() {
 								<InputTextarea
 									title={t("description")}
 									name="mota_en"
+									placeholder={t("description")}
 									value={abouts.mota_en}
 									onChange={handleChange}
 									language={t("en")}
@@ -260,15 +269,19 @@ export default function AboutUs() {
 								<div>
 									<InputSm
 										title={t("title") + " SEO"}
+										language={t("en")}
 										value={abouts.title_en}
 										onChange={handleChange}
+										placeholder={t("title") + " SEO"}
 									/>
 								</div>
 								<div>
 									<InputSm
 										title={t("keywords") + " SEO"}
+										language={t("en")}
 										value={abouts.keywords_en}
 										onChange={handleChange}
+										placeholder={t("keywords") + " SEO"}
 									/>
 								</div>
 								<div>
@@ -278,6 +291,7 @@ export default function AboutUs() {
 										value={abouts.description_en}
 										onChange={handleChange}
 										language={t("en")}
+										placeholder={t("description") + " SEO"}
 									/>
 								</div>
 							</div>

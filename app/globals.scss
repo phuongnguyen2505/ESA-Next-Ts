@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
 	--black: #333333;
 	--dark-black: #171717;
@@ -72,6 +76,30 @@
 			&:hover ~ li::before {
 				transform: translateX(-100%);
 				transition: 0.2s 0.2s, scale 0s 0.4s;
+			}
+		}
+	}
+}
+
+@layer utilities {
+	.scrollbar {
+		&::-webkit-scrollbar {
+			width: 10px;
+			height: 10px;
+		}
+
+		&::-webkit-scrollbar-track {
+			border-radius: 100vh;
+			background: #f7f4ed;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background: #34455d;
+			border-radius: 100vh;
+			border: 3px solid #f6f7ed;
+
+			&:hover {
+				background: #1f2937;
 			}
 		}
 	}

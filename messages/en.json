@@ -40,6 +40,7 @@
 		"description": "Description",
 		"name": "Name",
 		"unaccentedName": "Unaccented Name",
-		"keywords": "Keywords"
+		"keywords": "Keywords",
+		"enter": "Enter"
 	}
 }

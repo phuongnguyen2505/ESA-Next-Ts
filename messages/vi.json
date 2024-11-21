@@ -40,7 +40,8 @@
 		"description": "Mô tả",
 		"name": "Tên",
 		"unaccentedName": "Tên không dấu",
-		"keywords": "Keywords"
+		"keywords": "Keywords",
+		"enter": "Nhập"
 	}
 
 }
