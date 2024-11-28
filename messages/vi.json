@@ -26,6 +26,7 @@
 		"delete": "Xóa",
 		"save": "Lưu",
 		"cancel": "Hủy",
+		"close": "Đóng",
 		"upload": "Tải lên",
 		"preview": "Xem trước",
 		"uploadImage": "Tải lên ảnh",
@@ -41,7 +42,31 @@
 		"name": "Tên",
 		"unaccentedName": "Tên không dấu",
 		"keywords": "Keywords",
-		"enter": "Nhập"
-	}
+		"enter": "Nhập",
+		"list": "Danh sách",
+		"category": "Danh mục",
+		"addProduct": "Thêm sản phẩm",
+		"addCategory": "Thêm danh mục",
+		"addList": "Thêm danh sách",
+		"productCode": "Mã sản phẩm",
+		"productList": "Danh sách sản phẩm",
+		"priority": "Ưu tiên",
+		"status": "Trạng thái",
 
+
+		"actions": "Hành động",
+		"active": "Hoạt động",
+		"inactive": "Không hoạt động",
+		"normal": "Bình thường",
+		"highlight": "Nổi bật",
+
+		"messages": {
+			"deleteSuccess": "Xóa thành công",
+			"deleteFailed": "Xóa thất bại",
+			"addSuccess": "Thêm mới thành công",
+			"addFailed": "Thêm mới thất bại",
+			"updateSuccess": "Cập nhật thành công",
+			"updateFailed": "Cập nhật thất bại"
+		}
+	}
 }

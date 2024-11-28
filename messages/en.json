@@ -26,6 +26,7 @@
 		"delete": "Delete",
 		"save": "Save",
 		"cancel": "Cancel",
+		"close": "Close",
 		"upload": "Upload",
 		"preview": "Preview",
 		"uploadImage": "Upload Image",
@@ -41,6 +42,32 @@
 		"name": "Name",
 		"unaccentedName": "Unaccented Name",
 		"keywords": "Keywords",
-		"enter": "Enter"
+		"enter": "Enter",
+		"list": "List",
+		"category": "Category",
+		"addProduct": "Add Product",
+		"addCategory": "Add Category",
+		"addList": "Add List",
+		"productCode": "Product Code",
+		"productName": "Product Name",
+		"productList": "Product List",
+		"priority": "Priority",
+		"status": "Status",
+
+
+		"actions": "Actions",
+		"active": "Active",
+		"inactive": "Inactive",
+		"normal": "Normal",
+		"highlight": "Highlight",
+
+		"messages": {
+			"deleteSuccess": "Successfully deleted",
+			"deleteFailed": "Delete failed",
+			"addSuccess": "Successfully added",
+			"addFailed": "Add failed",
+			"updateSuccess": "Successfully updated",
+			"updateFailed": "Update failed"
+		}
 	}
 }

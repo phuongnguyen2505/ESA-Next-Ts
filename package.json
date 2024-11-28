@@ -11,12 +11,17 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^43.3.1",
     "@ckeditor/ckeditor5-react": "^9.3.1",
+    "@heroicons/react": "^2.2.0",
     "@prisma/client": "^5.22.0",
+    "@types/axios": "^0.9.36",
+    "@types/dotenv": "^6.1.1",
     "@types/next-auth": "^3.15.0",
     "apexcharts": "^3.54.1",
     "autoprefixer": "^10.4.20",
+    "axios": "^1.7.8",
     "ckeditor5": "^43.3.1",
     "ckeditor5-premium-features": "^43.3.1",
+    "dotenv": "^16.4.5",
     "gsap": "^3.12.5",
     "jsdom": "^25.0.1",
     "multer": "^1.4.5-lts.1",
@@ -29,8 +34,8 @@
     "react": "^18.2.0",
     "react-apexcharts": "^1.5.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.3.0",
     "react-quill": "^2.0.0",
-    "sass": "^1.81.0",
     "tailwindcss": "^3.4.14"
   },
   "devDependencies": {
@@ -41,6 +46,8 @@
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "prisma": "^5.22.0",
+    "sass": "^1.81.0",
+    "sass-loader": "^16.0.3",
     "typescript": "^5"
   }
 }

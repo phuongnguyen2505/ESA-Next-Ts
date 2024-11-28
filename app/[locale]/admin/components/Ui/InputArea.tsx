@@ -1,21 +1,21 @@
 interface InputTextareaProps {
 	title: string;
-	name: string;
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	placeholder?: string;
 	rows?: number;
 	language?: string;
+	name?: string;
 }
 
 const InputTextarea = ({
 	title,
-	name,
 	value,
 	onChange,
 	placeholder,
 	rows = 3,
 	language,
+	name,
 }: InputTextareaProps) => {
 	return (
 		<div>

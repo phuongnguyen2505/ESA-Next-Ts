@@ -1,21 +1,9 @@
-export interface Product {
+export interface ProductCat {
 	id: number;
 	id_list: number;
-	id_item: number;
-	list_ten_vi?: string;
-	list_ten_en?: string;
-	cat_ten_vi?: string;
-	cat_ten_en?: string;
-	id_cat: number;
 	noibat: number;
-	photo: string;
-	thumb: string;
-	file: string;
 	ten_vi: string;
 	ten_en: string;
-	masp: string;
-	mota_vi: string;
-	mota_en: string;
 	noidung_vi: string;
 	noidung_en: string;
 	title_vi: string;
@@ -28,7 +16,4 @@ export interface Product {
 	hienthi: number;
 	ngaytao: Date;
 	ngaysua: Date;
-	luotxem: number;
-	tags_vi: string;
-	tags_en: string;
 }

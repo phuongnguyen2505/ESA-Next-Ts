@@ -24,6 +24,7 @@ export default function Sidebar({ toggleDarkMode }: SidebarProps) {
 					className="logo top-4 w-full h-full relative"
 					width={150}
 					height={50}
+					priority
 				/>
 			</div>
 			<Menu />

@@ -3,7 +3,7 @@
 import AdminLayout from "@/app/[locale]/admin/components/layouts/AdminLayout";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import axios from "axios";
 
 import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
@@ -12,9 +12,10 @@ import InputSm from "../components/Ui/InputSm";
 import InputCKeditor from "../components/Ui/InputCKeditor";
 import InputTextarea from "../components/Ui/InputArea";
 import LanguageTabs from "../components/Ui/LanguageTabs";
-import Alert from "../components/Ui/Alert";
 import InputImage from "../components/Ui/InputImage";
 import Button from "../components/Ui/Button";
+import InputCheckbox from "../components/Ui/InputCheckbox";
+import Modal from "../components/Ui/ModalAlert";
 
 function removeAccents(str: string) {
 	return str
@@ -54,12 +55,32 @@ const editorConfig = {
 
 export default function AboutUs() {
 	const t = useTranslations("admin");
-	const [abouts, setAbouts] = useState<any>({});
+	const [abouts, setAbouts] = useState<any>({
+		ten_vi: "",
+		mota_vi: "",
+		noidung_vi: "",
+		title_vi: "",
+		keywords_vi: "",
+		description_vi: "",
+		ten_en: "",
+		mota_en: "",
+		noidung_en: "",
+		title_en: "",
+		keywords_en: "",
+		description_en: "",
+		photo: null,
+		hienthi: 0,
+	});
 	const [imageFile, setImageFile] = useState<File | null>(null);
-	const [alert, setAlert] = useState<{
+	const [modal, setModal] = useState<{
+		isOpen: boolean;
 		message: string;
 		type: "success" | "error";
-	} | null>(null);
+	}>({
+		isOpen: false,
+		message: "",
+		type: "success"
+	});
 
 	useEffect(() => {
 		async function fetchData() {
@@ -103,28 +124,24 @@ export default function AboutUs() {
 		}
 
 		try {
-			const response = await fetch("/api/saveAbout", {
-				method: "POST",
-				body: formData,
+			await axios.post('/api/saveAbout', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
 			});
-			const result = await response.json();
-			if (response.ok) {
-				setAlert({ message: result.message, type: "success" });
-			} else {
-				setAlert({ message: result.error, type: "error" });
-			}
-		} catch (error) {
-			console.error("Error saving about:", error);
-			setAlert({
-				message: "An error occurred while saving. Please try again.",
-				type: "error",
+			
+			setModal({
+				isOpen: true,
+				message: t("messages.updateSuccess"),
+				type: "success"
+			});
+		} catch (error: any) {
+			setModal({
+				isOpen: true,
+				message: t("messages.updateFailed"),
+				type: "error"
 			});
 		}
-
-		// Tự động ẩn thông báo sau 3 giây
-		setTimeout(() => {
-			setAlert(null);
-		}, 3000);
 	};
 
 	const handleChange = (
@@ -148,10 +165,13 @@ export default function AboutUs() {
 
 	return (
 		<AdminLayout pageName={t("aboutus")}>
+			<Modal
+				isOpen={modal.isOpen}
+				message={modal.message}
+				type={modal.type}
+				onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
+			/>
 			<div className="w-full h-[75vh] overflow-y-auto px-4 dark:bg-gray-800 scrollbar">
-				{/* Alert */}
-				{alert && <Alert message={alert.message} type={alert.type} />}
-
 				<form
 					onSubmit={handleSubmit}
 					className="w-full mx-auto p-6 bg-white rounded-lg shadow-lg space-y-6 dark:bg-gray-800"
@@ -169,6 +189,7 @@ export default function AboutUs() {
 									onChange={handleChange}
 									language={t("vn")}
 									placeholder={t("name")}
+									name="ten_vi"
 								/>
 							</div>
 							<div>
@@ -202,6 +223,7 @@ export default function AboutUs() {
 										value={abouts.title_vi}
 										onChange={handleChange}
 										placeholder={t("title") + " SEO"}
+										name="title_vi"
 									/>
 								</div>
 								<div>
@@ -210,6 +232,7 @@ export default function AboutUs() {
 										value={abouts.keywords_vi}
 										onChange={handleChange}
 										placeholder={t("keywords") + " SEO"}
+										name="keywords_vi"
 									/>
 								</div>
 								<div>
@@ -236,6 +259,7 @@ export default function AboutUs() {
 									value={abouts.ten_en}
 									onChange={handleChange}
 									placeholder={t("name")}
+									name="ten_en"
 								/>
 							</div>
 
@@ -273,6 +297,7 @@ export default function AboutUs() {
 										value={abouts.title_en}
 										onChange={handleChange}
 										placeholder={t("title") + " SEO"}
+										name="title_en"
 									/>
 								</div>
 								<div>
@@ -282,6 +307,7 @@ export default function AboutUs() {
 										value={abouts.keywords_en}
 										onChange={handleChange}
 										placeholder={t("keywords") + " SEO"}
+										name="keywords_en"
 									/>
 								</div>
 								<div>
@@ -312,15 +338,13 @@ export default function AboutUs() {
 
 					{/* Hiển thị */}
 					<div className="flex items-center space-x-2">
-						<input
-							type="checkbox"
+						<InputCheckbox
 							name="hienthi"
 							checked={abouts.hienthi === 1}
 							onChange={handleCheckboxChange}
-							placeholder="Hiển thị"
-							className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+							label={t("show")}
+							placeholder={t("show")}
 						/>
-						<label className="text-sm font-medium ">{t("show")}</label>
 					</div>
 
 					{/* Buttons */}
