@@ -23,6 +23,7 @@
 		"setting": "Setting",
 		"edit": "Edit",
 		"add": "Add",
+		"create": "Create",
 		"delete": "Delete",
 		"save": "Save",
 		"cancel": "Cancel",
@@ -53,13 +54,17 @@
 		"productList": "Product List",
 		"priority": "Priority",
 		"status": "Status",
-
+		"url": "Url",
+		"productGroup": "Product Group",
 
 		"actions": "Actions",
 		"active": "Active",
 		"inactive": "Inactive",
 		"normal": "Normal",
-		"highlight": "Highlight",
+		"featured": "Featured",
+
+		"editProductList": "Edit Product List",
+
 
 		"messages": {
 			"deleteSuccess": "Successfully deleted",
@@ -67,7 +72,10 @@
 			"addSuccess": "Successfully added",
 			"addFailed": "Add failed",
 			"updateSuccess": "Successfully updated",
-			"updateFailed": "Update failed"
+			"updateFailed": "Update failed",
+			"createFailed": "Create failed",
+			"createSuccess": "Successfully created",
+			"loadDataError": "Error loading data"
 		}
 	}
 }

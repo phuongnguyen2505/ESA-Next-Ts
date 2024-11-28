@@ -6,6 +6,7 @@ export interface ProductList {
 	mota_en: string;
 	noidung_vi: string;
 	noidung_en: string;
+	tenkhongdau: string;
 	title_vi: string;
 	title_en: string;
 	keywords_vi: string;
@@ -18,3 +19,5 @@ export interface ProductList {
 	ngaysua: Date;
 	noibat: number;
 }
+
+export type ProductListFormData = Omit<ProductList, 'id' | 'stt'>;

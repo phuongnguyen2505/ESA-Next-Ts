@@ -4,7 +4,6 @@ import Breadcrumb from "@/app/components/Ui/Breadcrumb";
 import Sidebar from "@/app/[locale]/admin/components/layouts/Sidebar";
 import Header from "@/app/[locale]/admin/components/layouts/Header";
 
-
 interface AdminLayoutProps {
 	children: ReactNode;
 	pageName: string;
@@ -42,9 +41,13 @@ export default function AdminLayout({ children, pageName }: AdminLayoutProps) {
 			<div className="flex-1 bg-white h dark:bg-dark-bg dark:text-white h-screen">
 				<Header />
 				<div className="bg-gray-200 dark:bg-gray-700 p-4">
-					<Breadcrumb pageName={pageName} url=""/>
+					<Breadcrumb pageName={pageName} url="" />
 				</div>
-				<div className="p-4 overflow-auto flex-1">{children}</div>
+				<div className="p-4 overflow-auto flex-1">
+					<div className="w-full h-[75vh] overflow-y-auto px-4 rounded-lg dark:bg-gray-800 scrollbar">
+						{children}
+					</div>
+				</div>
 			</div>
 		</section>
 	);

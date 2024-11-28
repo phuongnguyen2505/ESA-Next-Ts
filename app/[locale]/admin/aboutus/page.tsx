@@ -135,7 +135,8 @@ export default function AboutUs() {
 				message: t("messages.updateSuccess"),
 				type: "success"
 			});
-		} catch (error: any) {
+		} catch (error) {
+			console.error('Lỗi khi cập nhật:', error);
 			setModal({
 				isOpen: true,
 				message: t("messages.updateFailed"),
@@ -171,7 +172,6 @@ export default function AboutUs() {
 				type={modal.type}
 				onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
 			/>
-			<div className="w-full h-[75vh] overflow-y-auto px-4 dark:bg-gray-800 scrollbar">
 				<form
 					onSubmit={handleSubmit}
 					className="w-full mx-auto p-6 bg-white rounded-lg shadow-lg space-y-6 dark:bg-gray-800"
@@ -352,7 +352,6 @@ export default function AboutUs() {
 						<Button type="submit">{t("save")}</Button>
 					</div>
 				</form>
-			</div>
 		</AdminLayout>
 	);
 }

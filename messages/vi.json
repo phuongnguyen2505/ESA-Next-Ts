@@ -25,6 +25,7 @@
 		"add": "Thêm Mới",
 		"delete": "Xóa",
 		"save": "Lưu",
+		"create": "Tạo mới",
 		"cancel": "Hủy",
 		"close": "Đóng",
 		"upload": "Tải lên",
@@ -52,13 +53,16 @@
 		"productList": "Danh sách sản phẩm",
 		"priority": "Ưu tiên",
 		"status": "Trạng thái",
-
+		"url": "Đường dẫn",
+		"productGroup": "Nhóm sản phẩm",
 
 		"actions": "Hành động",
 		"active": "Hoạt động",
 		"inactive": "Không hoạt động",
 		"normal": "Bình thường",
-		"highlight": "Nổi bật",
+		"featured": "Nổi bật",
+
+		"editProductList": "Chỉnh sửa danh sách sản phẩm",
 
 		"messages": {
 			"deleteSuccess": "Xóa thành công",
@@ -66,7 +70,10 @@
 			"addSuccess": "Thêm mới thành công",
 			"addFailed": "Thêm mới thất bại",
 			"updateSuccess": "Cập nhật thành công",
-			"updateFailed": "Cập nhật thất bại"
+			"updateFailed": "Cập nhật thất bại",
+			"createFailed": "Tạo mới thất bại",
+			"createSuccess": "Tạo mới thành công",
+			"loadDataError": "Lỗi tải dữ liệu"
 		}
 	}
 }
