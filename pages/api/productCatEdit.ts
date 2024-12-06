@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		try {
 			const result = await new Promise<RowDataPacket>((resolve, reject) => {
 				db.query(
-					"SELECT * FROM table_product_list WHERE id = ?",
+					"SELECT * FROM table_product_cat WHERE id = ?",
 					[id],
 					(err, results: RowDataPacket[]) => {
 						if (err) reject(err);
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			});
 
 			if (!result) {
-				return res.status(404).json({ error: "Product list not found" });
+				return res.status(404).json({ error: "Product cat not found" });
 			}
 
 			res.status(200).json({ list: result });
@@ -31,6 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		try {
 			const {
 				id,
+				id_list,
 				ten_vi,
 				ten_en,
 				title_vi,
@@ -47,7 +48,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 			const result = await new Promise((resolve, reject) => {
 				db.query(
-					`UPDATE table_product_list SET 
+					`UPDATE table_product_cat SET 
+						id_list = ?,
 						ten_vi = ?, 
 						ten_en = ?, 
 						title_vi = ?, 
@@ -61,6 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						ngaysua = NOW()
 					WHERE id = ?`,
 					[
+						id_list,
 						ten_vi,
 						ten_en,
 						title_vi,
@@ -90,7 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				result: result 
 			});
 		} catch (error) {
-			console.error("Error updating product list:", error);
+			console.error("Error updating product cat:", error);
 			res.status(500).json({ error: "Internal Server Error" });
 		}
 	} else {

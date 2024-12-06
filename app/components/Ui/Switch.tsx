@@ -1,38 +1,32 @@
 import React from "react";
+import { useTheme } from '@/lib/hooks/useTheme';
 
-interface SwitchProps {
-	checked?: boolean;
-	onChange?: (checked: boolean) => void;
-}
-
-export default function Switch({ checked = false, onChange }: SwitchProps) {
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		onChange?.(e.target.checked);
-	};
+export default function Switch() {
+	const { theme, toggleTheme } = useTheme();
 
 	return (
 		<label className="relative inline-block cursor-pointer">
 			<input
 				type="checkbox"
 				className="sr-only"
-				checked={checked}
-				onChange={handleChange}
+				checked={theme === 'dark'}
+				onChange={toggleTheme}
 			/>
 			<div className="w-12 h-5 bg-[rgb(135,150,165)] rounded-full relative">
 				<div
 					className={`
-            pointer-events-none 
-            absolute -top-1.5 w-8 h-8 
-            rounded-full shadow-md
-            flex items-center justify-center
-            transition-all duration-150 ease-in-out
-            ${
-					checked
-						? "translate-x-4 bg-[rgb(0,56,146)]"
-						: "translate-x-0 bg-[rgb(232,89,15)]"
-				}`}
+						pointer-events-none 
+						absolute -top-1.5 w-8 h-8 
+						rounded-full shadow-md
+						flex items-center justify-center
+						transition-all duration-150 ease-in-out
+						${
+							theme === 'dark'
+								? "translate-x-4 bg-[rgb(0,56,146)]"
+								: "translate-x-0 bg-[rgb(232,89,15)]"
+						}`}
 				>
-					{checked ? (
+					{theme === 'dark' ? (
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="w-5 h-5"

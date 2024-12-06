@@ -3,8 +3,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import LocaleSwitcher from "../Ui/LocaleSwitcher";
 import Link from "next/link";
-
-
+import Image from "next/image";
 
 type NavItem = {
 	key: string;
@@ -35,23 +34,51 @@ export default function Menu() {
 		const locale = getCurrentLocale();
 		return `/${locale}${path === "/" ? "" : path}`;
 	};
-	
-	return (
-		<>
-			<ul className="menu list-none m-0 p-0 flex uppercase items-center gap-4 top-1">
-				{NAV_ITEMS.map((item) => (
-					<li key={item.key} className={pathname === createLocalePath(item.path) ? "active" : ""}>
-						<Link
-							href={createLocalePath(item.path)}
-						>
-							{t(item.translationKey)}
-						</Link>
-					</li>
-				))}
-				<li className="pb-1">
-					<LocaleSwitcher />
+
+	const isActiveLink = (path: string): boolean => {
+		const localePath = createLocalePath(path);
+		return pathname?.startsWith(localePath) || false;
+	};
+
+	const renderNavItems = (items: NavItem[]) => (
+		<div className="flex gap-4">
+			{items.map((item) => (
+				<li key={item.key} className={isActiveLink(item.path) ? "active" : ""}>
+					<Link href={createLocalePath(item.path)}>
+						{t(item.translationKey)}
+					</Link>
 				</li>
-			</ul>
-		</>
+			))}
+		</div>
+	);
+
+	return (
+		<nav className="w-full">
+			<div className="flex justify-evenly items-center uppercase">
+				<ul className="menu list-none m-0 p-0 flex gap-4">
+					{renderNavItems(NAV_ITEMS.slice(0, 3))}
+				</ul>
+
+				<div className="flex items-center">
+					<div className="max-w-36 flex justify-center items-center flex-1">
+						<Link href={createLocalePath("/")} className="flex h-12 max-h-32 relative items-center">
+							<Image
+								src="/images/final.png"
+								alt="Logo"
+								className="logo top-7 relative"
+								width={150}
+								height={50}
+								priority
+							/>
+						</Link>
+					</div>
+				</div>
+
+				<ul className="menu list-none m-0 p-0 flex gap-4">
+					{renderNavItems(NAV_ITEMS.slice(3))}
+					<LocaleSwitcher />
+				</ul>
+			</div>
+		</nav>
 	);
 }

@@ -49,13 +49,19 @@
 		"addProduct": "Add Product",
 		"addCategory": "Add Category",
 		"addList": "Add List",
+		"createCat": "Create Category",
 		"productCode": "Product Code",
 		"productName": "Product Name",
 		"productList": "Product List",
+		"productCat": "Product Category",
+		"selectProductList": "Select Product List",
+		"selectCategory": "Select Category",
 		"priority": "Priority",
 		"status": "Status",
 		"url": "Url",
 		"productGroup": "Product Group",
+		"confirm": "Confirm",
+		"confirmDelete": "Are you sure you want to delete this item?",
 
 		"actions": "Actions",
 		"active": "Active",
@@ -64,7 +70,13 @@
 		"featured": "Featured",
 
 		"editProductList": "Edit Product List",
+		"editProductCat": "Edit Product Category",
+		"editProduct": "Edit Product",
+		
 
+		"autoGenerate": "Auto generate code",
+
+		"tags": "Tags",
 
 		"messages": {
 			"deleteSuccess": "Successfully deleted",
@@ -75,7 +87,12 @@
 			"updateFailed": "Update failed",
 			"createFailed": "Create failed",
 			"createSuccess": "Successfully created",
-			"loadDataError": "Error loading data"
-		}
+			"loadDataError": "Error loading data",
+			"fetchError": "Error fetching product data",
+			"invalidData": "Invalid data",
+			"itemNotFound": "Item not found",
+			"notAuthorized": "Not authorized"
+		},
+		"back": "Back"
 	}
 }

@@ -37,21 +37,22 @@ export default function Menu() {
 
 	const isActiveLink = (path: string): boolean => {
 		const localePath = createLocalePath(path);
-		return pathname === localePath;
+		return pathname?.startsWith(localePath) || false;
 	};
 
 	return (
 		<nav className="w-full">
 			<ul className="flex flex-col gap-3 items-center">
 				{ADMIN_MENU_ITEMS.map((item) => (
-					<li
+					<Link
 						key={item.key}
+						href={createLocalePath(item.path)}
 						className={`w-full text-center block py-2 px-4 rounded transition hover:bg-gray-600 ${
 							isActiveLink(item.path) ? "bg-gray-600" : ""
 						}`}
 					>
-						<Link href={createLocalePath(item.path)}>{t(item.translationKey)}</Link>
-					</li>
+						<li>{t(item.translationKey)}</li>
+					</Link>
 				))}
 			</ul>
 		</nav>

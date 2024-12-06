@@ -190,6 +190,7 @@ export default function AboutUs() {
 									language={t("vn")}
 									placeholder={t("name")}
 									name="ten_vi"
+									required
 								/>
 							</div>
 							<div>
@@ -260,6 +261,7 @@ export default function AboutUs() {
 									onChange={handleChange}
 									placeholder={t("name")}
 									name="ten_en"
+									required
 								/>
 							</div>
 
@@ -333,6 +335,7 @@ export default function AboutUs() {
 							imagePreview={imagePreview}
 							currentImage={abouts.photo}
 							t={t}
+							required
 						/>
 					</div>
 

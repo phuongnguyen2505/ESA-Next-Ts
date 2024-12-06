@@ -1,26 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import multer from "multer";
+import formidable from 'formidable';
 import path from "path";
+import fs from 'fs';
 
-const upload = multer({
-	storage: multer.diskStorage({
-		destination: "./public/uploads/editor",
-		filename: (req, file, cb) => {
-			const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-			cb(null, uniqueSuffix + path.extname(file.originalname));
-		},
-	}),
-});
-
-const runMiddleware = (req: NextApiRequest, res: NextApiResponse, fn: Function) => {
-	return new Promise((resolve, reject) => {
-		fn(req, res, (result: any) => {
-			if (result instanceof Error) {
-				return reject(result);
-			}
-			return resolve(result);
-		});
-	});
+export const config = {
+	api: {
+		bodyParser: false,
+	},
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -29,11 +15,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	try {
-		await runMiddleware(req, res, upload.single("upload"));
-		const file = (req as any).file;
+		// Cấu hình upload
+		const uploadDir = path.join(process.cwd(), 'public/uploads/editor');
+		const form = formidable({
+			uploadDir,
+			keepExtensions: true,
+			maxFileSize: 5 * 1024 * 1024, // 5MB
+		});
+
+		// Parse form data
+		const [, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+			form.parse(req, (err, fields, files) => {
+				if (err) reject(err);
+				resolve([fields, files]);
+			});
+		});
+
+		// Xử lý file ảnh
+		const uploadedFile = files.upload;
+		if (!uploadedFile || !Array.isArray(uploadedFile) || !uploadedFile[0]) {
+			throw new Error('No file uploaded');
+		}
+
+		const file = uploadedFile[0];
+		const ext = path.extname(file.newFilename);
+		const timestamp = Date.now();
+		const newFilename = `editor_${timestamp}${ext}`;
+		const newPath = path.join(uploadDir, newFilename);
+
+		// Đổi tên file
+		fs.renameSync(file.filepath, newPath);
 
 		res.status(200).json({
-			url: `/uploads/editor/${file.filename}`,
+			url: `/uploads/editor/${newFilename}`,
 			uploaded: true,
 		});
 	} catch (error) {
@@ -41,14 +55,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		res.status(500).json({
 			uploaded: false,
 			error: {
-				message: "Could not upload the image.",
+				message: error instanceof Error ? error.message : "Could not upload the image.",
 			},
 		});
 	}
 }
-
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};

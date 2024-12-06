@@ -27,30 +27,30 @@ const InputImage = ({
 					accept="image/*"
 					onChange={onChange}
 					placeholder="Chọn hình ảnh"
-					className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+					className="w-full px-3 py-2 border border-gray-300 bg-white text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 				/>
 				{(imagePreview || currentImage) && (
 					<div className="grid grid-cols-2 gap-4">
 						<div className="space-y-2">
-							<p className="text-sm text-gray-500">{t("original")}:</p>
+							<p className="text-sm">{t("original")}:</p>
 							<div className="relative aspect-video w-full">
 								<Image
 									src={imagePreview || currentImage || ""}
 									alt="Preview"
 									fill
-									className="object-contain rounded-md border border-gray-200"
+									className="object-contain rounded-md border border-gray-200 bg-white"
 									priority
 								/>
 							</div>
 						</div>
 						<div className="space-y-2">
-							<p className="text-sm text-gray-500">{t("thumbnail")}:</p>
+							<p className="text-sm">{t("thumbnail")}:</p>
 							<div className="relative aspect-video w-full">
 								<Image
 									src={imagePreview || currentImage || ""}
 									alt="Thumbnail Preview"
 									fill
-									className="object-cover rounded-md border border-gray-200"
+									className="object-cover rounded-md border border-gray-200 bg-white"
 									priority
 								/>
 							</div>

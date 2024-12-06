@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 
 export default function LocaleSwitcher() {
 	const pathname = usePathname();
+	const currentLocale = pathname?.split("/")[1] || "vi";
 
 	const redirectedPathName = (locale: string) => {
 		if (!pathname) return "/";
@@ -11,30 +12,45 @@ export default function LocaleSwitcher() {
 		segments[1] = locale;
 		return segments.join("/");
 	};
+
 	return (
-		<>
-			<span className="w-20 h-5 flex gap-3">
-				<Link href={redirectedPathName("vi")}>
-					<Image
-						src="/images/vn.png"
-						alt="Ngôn ngữ"
-						className="w-full h-full"
-						width={50}
-						height={30}
-						priority
-					/>  
-				</Link>
-				<Link href={redirectedPathName("en")}>
-					<Image
-						src="/images/en.png"
-						alt="Languages"
-						className="w-full h-full"
-						width={50}
-						height={30}
-						priority
-					/>
-				</Link>
-			</span>
-		</>
+		<div className="relative w-32 overflow-hidden">
+			<Link
+				href={redirectedPathName(currentLocale === "vi" ? "en" : "vi")}
+				className="block group"
+				>
+				<div className="relative h-8">
+					{/* Current Language */}
+					<div className="flex items-center gap-2 absolute inset-0 transition-transform duration-300 ease-in-out group-hover:-translate-y-full">
+						<Image
+							src={`/images/${currentLocale}.png`}
+							alt={currentLocale === "vi" ? "Tiếng Việt" : "English"}
+							width={24}
+							height={16}
+							className="object-cover"
+							priority
+						/>
+						<span className="text-sm">
+							{currentLocale === "vi" ? "Tiếng Việt" : "English"}
+						</span>
+					</div>
+
+					{/* Alternative Language */}
+					<div className="flex items-center gap-2 absolute inset-0 transition-transform duration-300 ease-in-out translate-y-full group-hover:translate-y-0">
+						<Image
+							src={`/images/${currentLocale === "vi" ? "en" : "vi"}.png`}
+							alt={currentLocale === "vi" ? "English" : "Tiếng Việt"}
+							width={24}
+							height={16}
+							className="object-cover"
+							priority
+						/>
+						<span className="text-sm">
+							{currentLocale === "vi" ? "English" : "Tiếng Việt"}
+						</span>
+					</div>
+				</div>
+			</Link>
+		</div>
 	);
 }

@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				keywords_en: about.keywords_en,
 				description_en: about.description_en,
 				tenkhongdau: about.tenkhongdau,
-				photo: about.photo,
+				photo: about.photo ? `/uploads/about/${about.photo}` : null,
 				hienthi: about.hienthi,
 			};
 			res.status(200).json(response);

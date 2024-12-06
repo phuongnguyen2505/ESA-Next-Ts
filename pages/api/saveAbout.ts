@@ -1,23 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import db from "@/lib/db";
-import multer from "multer";
+import formidable from 'formidable';
+import path from 'path';
+import fs from 'fs';
 
-const upload = multer({
-	storage: multer.diskStorage({
-		destination: "./public/uploads",
-		filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
-	}),
-});
-
-const runMiddleware = (req: NextApiRequest, res: NextApiResponse, fn: Function) => {
-	return new Promise((resolve, reject) => {
-		fn(req, res, (result: any) => {
-			if (result instanceof Error) {
-				return reject(result);
-			}
-			return resolve(result);
-		});
-	});
+export const config = {
+	api: {
+		bodyParser: false,
+	},
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -26,115 +16,144 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	try {
-		await runMiddleware(req, res, upload.single('photo'));
+		// Cấu hình upload
+		const uploadDir = path.join(process.cwd(), 'public/uploads/about');
+		const form = formidable({
+			uploadDir,
+			keepExtensions: true,
+			maxFileSize: 5 * 1024 * 1024, // 5MB
+		});
+
+		// Parse form data
+		const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+			form.parse(req, (err, fields, files) => {
+				if (err) reject(err);
+				resolve([fields, files]);
+			});
+		});
+
+		// Xử lý file ảnh
+		const photo = files.photo;
+		let photoName = '';
 		
-		const {
-			id,
-			ten_vi,
-			mota_vi,
-			noidung_vi,
-			title_vi,
-			keywords_vi,
-			description_vi,
-			ten_en,
-			mota_en,
-			noidung_en,
-			title_en,
-			keywords_en,
-			description_en,
-			tenkhongdau,
-			hienthi,
-		} = req.body;
-
-		const photo = req.file ? `/uploads/${req.file.filename}` : null;
-
-		try {
+		if (photo && Array.isArray(photo) && photo[0]) {
+			// Nếu có ảnh mới và có id, xóa ảnh cũ
+			const id = fields.id?.[0];
 			if (id) {
-				// Nếu có id, thực hiện cập nhật
-				await new Promise((resolve, reject) => {
-					const query = `
-						UPDATE table_about SET
-						ten_vi = ?, mota_vi = ?, noidung_vi = ?, title_vi = ?, keywords_vi = ?, description_vi = ?,
-						ten_en = ?, mota_en = ?, noidung_en = ?, title_en = ?, keywords_en = ?, description_en = ?,
-						tenkhongdau = ?, hienthi = ?, photo = ?
-						WHERE id = ?`;
-					const values = [
-						ten_vi,
-						mota_vi,
-						noidung_vi,
-						title_vi,
-						keywords_vi,
-						description_vi,
-						ten_en,
-						mota_en,
-						noidung_en,
-						title_en,
-						keywords_en,
-						description_en,
-						tenkhongdau,
-						hienthi,
-						photo,
-						id,
-					];
-					db.query(query, values, (err, result) => {
-						if (err) {
-							console.error("Error executing update query:", err);
-							reject(err);
-						} else {
-							console.log("Update query result:", result);
-							resolve(true);
+				const [oldData]: any = await new Promise((resolve, reject) => {
+					db.query(
+						'SELECT photo FROM table_about WHERE id = ?',
+						[id],
+						(err, results) => {
+							if (err) reject(err);
+							else resolve(results);
 						}
-					});
+					);
 				});
-			} else {
-				// Nếu không có id, thực hiện lưu mới
-				await new Promise((resolve, reject) => {
-					const query = `
-						INSERT INTO table_about (ten_vi, mota_vi, noidung_vi, title_vi, keywords_vi, description_vi,
-						ten_en, mota_en, noidung_en, title_en, keywords_en, description_en, tenkhongdau, hienthi, photo)
-						VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-					const values = [
-						ten_vi,
-						mota_vi,
-						noidung_vi,
-						title_vi,
-						keywords_vi,
-						description_vi,
-						ten_en,
-						mota_en,
-						noidung_en,
-						title_en,
-						keywords_en,
-						description_en,
-						tenkhongdau,
-						hienthi,
-						photo,
-					];
-					db.query(query, values, (err, result) => {
-						if (err) {
-							console.error("Error executing insert query:", err);
-							reject(err);
-						} else {
-							console.log("Insert query result:", result);
-							resolve(true);
-						}
-					});
-				});
+
+				if (oldData?.photo) {
+					const oldPath = path.join(process.cwd(), 'public', oldData.photo);
+					if (fs.existsSync(oldPath)) {
+						fs.unlinkSync(oldPath);
+					}
+				}
 			}
 
-			res.status(200).json({ message: "Data saved successfully" });
-		} catch (error) {
-			console.error("Error saving about:", error);
-			res.status(500).json({ error: "Internal Server Error" });
+			// Lưu ảnh mới
+			const file = photo[0];
+			const ext = path.extname(file.newFilename);
+			const timestamp = Date.now();
+			photoName = `about_${timestamp}${ext}`;
+			
+			const newPath = path.join(uploadDir, photoName);
+			fs.renameSync(file.filepath, newPath);
 		}
+
+		// Chuẩn bị data để lưu
+		const updateData = {
+			ten_vi: fields.ten_vi?.[0],
+			mota_vi: fields.mota_vi?.[0],
+			noidung_vi: fields.noidung_vi?.[0],
+			title_vi: fields.title_vi?.[0],
+			keywords_vi: fields.keywords_vi?.[0],
+			description_vi: fields.description_vi?.[0],
+			ten_en: fields.ten_en?.[0],
+			mota_en: fields.mota_en?.[0],
+			noidung_en: fields.noidung_en?.[0],
+			title_en: fields.title_en?.[0],
+			keywords_en: fields.keywords_en?.[0],
+			description_en: fields.description_en?.[0],
+			tenkhongdau: fields.tenkhongdau?.[0],
+			hienthi: parseInt(fields.hienthi?.[0] || '1'),
+			...(photoName && { photo: photoName }),
+		};
+
+		const id = fields.id?.[0];
+		if (id) {
+			// Lấy nội dung cũ
+			const [oldData]: any = await new Promise((resolve, reject) => {
+				db.query(
+					'SELECT noidung_vi, noidung_en FROM table_about WHERE id = ?',
+					[id],
+					(err, results) => {
+						if (err) reject(err);
+						else resolve(results);
+					}
+				);
+			});
+
+			if (oldData) {
+				// Xóa ảnh từ nội dung cũ
+				deleteImagesFromContent(oldData.noidung_vi || '', fields.noidung_vi?.[0] || '');
+				deleteImagesFromContent(oldData.noidung_en || '', fields.noidung_en?.[0] || '');
+			}
+
+			// Tiếp tục với phần update như cũ
+			await new Promise((resolve, reject) => {
+				db.query(
+					'UPDATE table_about SET ? WHERE id = ?',
+					[updateData, id],
+					(err, result) => {
+						if (err) reject(err);
+						else resolve(result);
+					}
+				);
+			});
+		} else {
+			// Insert
+			await new Promise((resolve, reject) => {
+				db.query(
+					'INSERT INTO table_about SET ?',
+					updateData,
+					(err, result) => {
+						if (err) reject(err);
+						else resolve(result);
+					}
+				);
+			});
+		}
+
+		res.status(200).json({ message: "Data saved successfully" });
 	} catch (error) {
-		console.error("Error processing upload:", error);
-		res.status(500).json({ error: "Error processing upload" });
+		console.error("Error saving about:", error);
+		res.status(500).json({ 
+			error: "Internal Server Error",
+			details: error instanceof Error ? error.message : "Unknown error"
+		});
 	}
 }
 
-export const config = {
-	api: {
-		bodyParser: false, // Tắt bodyParser để multer có thể xử lý form data
-	},
+// Thêm hàm helper để tìm và xóa ảnh từ nội dung HTML
+const deleteImagesFromContent = (oldContent: string, newContent: string) => {
+	const oldImages: string[] = oldContent.match(/\/uploads\/editor\/[^"'\s)]+/g) || [];
+	const newImages: string[] = newContent.match(/\/uploads\/editor\/[^"'\s)]+/g) || [];
+	
+	const imagesToDelete = oldImages.filter(img => !newImages.includes(img));
+	
+	imagesToDelete.forEach(imagePath => {
+		const fullPath = path.join(process.cwd(), 'public', imagePath);
+		if (fs.existsSync(fullPath)) {
+			fs.unlinkSync(fullPath);
+		}
+	});
 };

@@ -4,8 +4,7 @@ export interface ProductCat {
 	noibat: number;
 	ten_vi: string;
 	ten_en: string;
-	noidung_vi: string;
-	noidung_en: string;
+	tenkhongdau: string;
 	title_vi: string;
 	title_en: string;
 	keywords_vi: string;

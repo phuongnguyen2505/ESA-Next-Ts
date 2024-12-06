@@ -9,9 +9,10 @@ interface InputSmProps {
 	name: string;
 	readOnly?: boolean;
 	disabled?: boolean;
+	required?: boolean;
 }
 
-export default function InputSm({ title, onChange, placeholder, language, value, name, readOnly, disabled }: InputSmProps) {
+export default function InputSm({ title, onChange, placeholder, language, value, name, readOnly, disabled, required }: InputSmProps) {
 	return (
 		<>
 			<label className="block text-sm font-medium mb-1">
@@ -28,6 +29,7 @@ export default function InputSm({ title, onChange, placeholder, language, value,
 				value={value}
 				readOnly={readOnly}
 				disabled={disabled}
+				required={required}
 			/>
 		</>
 	);

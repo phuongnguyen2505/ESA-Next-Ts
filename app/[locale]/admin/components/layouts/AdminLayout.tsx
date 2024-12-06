@@ -44,7 +44,7 @@ export default function AdminLayout({ children, pageName }: AdminLayoutProps) {
 					<Breadcrumb pageName={pageName} url="" />
 				</div>
 				<div className="p-4 overflow-auto flex-1">
-					<div className="w-full h-[75vh] overflow-y-auto px-4 rounded-lg dark:bg-gray-800 scrollbar">
+					<div className="p-4 w-full h-[75vh] overflow-y-auto px-4 rounded-lg dark:bg-gray-800 scrollbar">
 						{children}
 					</div>
 				</div>

@@ -1,42 +1,23 @@
 "use client";
 
-import AdminLayout from "@/app/[locale]/admin/components/layouts/AdminLayout";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState, useEffect, useCallback } from "react";
-import { useRouter, useParams } from "next/navigation";
-import axiosInstance from "@/lib/axios";
-import Modal from "../../components/Ui/ModalAlert";
-import Button from "../../components/Ui/Button";
+import AdminLayout from "../../components/layouts/AdminLayout";
+import InputArea from "../../components/Ui/InputArea";
 import InputSm from "../../components/Ui/InputSm";
+import Button from "../../components/Ui/Button";
+import Modal from "../../components/Ui/ModalAlert";
 import LanguageTabs from "../../components/Ui/LanguageTabs";
-import InputTextarea from "../../components/Ui/InputArea";
-import { ProductListFormData } from "@/types/productList";
+import axiosInstance from "@/lib/axios";
+import { ProductList } from "@/types/productList";
 
-
-interface ApiResponse {
-	list: ProductListFormData;
-}
-
-// Thêm hàm chuyển đổi string thành URL friendly
-const convertToSlug = (text: string): string => {
-	return text
-		.toLowerCase()
-		.normalize('NFD')
-		.replace(/[\u0300-\u036f]/g, '')  // Bỏ dấu tiếng Việt
-		.replace(/[đĐ]/g, 'd')            // Thay đ/Đ thành d
-		.replace(/[^a-z0-9\s-]/g, '')     // Chỉ giữ lại chữ thường, số và dấu gạch ngang
-		.replace(/\s+/g, '-')             // Thay khoảng trắng bằng dấu gạch ngang
-		.replace(/-+/g, '-')              // Xóa các dấu gạch ngang liên tiếp
-		.trim();                          // Xóa khoảng trắng đầu/cuối
-};
-
-export default function ListForm() {
-	const t = useTranslations("admin");
+export default function CreateProductCat() {
 	const router = useRouter();
-	const params = useParams() as { action?: string; id?: string };
-	const isEdit = params.action === "edit";
-
-	const [formData, setFormData] = useState<Partial<ProductListFormData>>({
+	const t = useTranslations("admin");
+	const [activeTab, setActiveTab] = useState<"vi" | "en">("vi");
+	const [formData, setFormData] = useState({
+		id_list: 0,
 		ten_vi: "",
 		ten_en: "",
 		tenkhongdau: "",
@@ -49,88 +30,101 @@ export default function ListForm() {
 		hienthi: 1,
 		noibat: 0,
 		ngaytao: new Date(),
-		ngaysua: new Date()
+		ngaysua: new Date(),
 	});
 
-	const [activeTab, setActiveTab] = useState<"vi" | "en">("vi");
 	const [modal, setModal] = useState({
 		isOpen: false,
-			message: "",
-			type: "success" as "success" | "error",
+		message: "",
+		type: "success" as "success" | "error",
 	});
 
-	const fetchListData = useCallback(async () => {
+	const [lists, setLists] = useState<ProductList[]>([]);
+
+	const fetchLists = async () => {
 		try {
-			const timestamp = new Date().getTime();
-			const response = await axiosInstance.get<ApiResponse>(
-				`/api/productList/${params.id}?t=${timestamp}`,
+			const response = await axiosInstance.get<{ lists: ProductList[] }>(
+				"/api/productList",
 			);
-			setFormData(response.data.list);
+			setLists(response.data.lists);
 		} catch (error) {
-			console.error("Lỗi khi tải dữ liệu:", error);
-			setModal({
-				isOpen: true,
-				message: t("messages.loadDataError"),
-				type: "error",
-			});
+			console.error("Error fetching lists:", error);
 		}
-	}, [params.id, t]);
+	};
 
 	useEffect(() => {
-		if (isEdit && params.id) {
-			fetchListData();
-		}
-	}, [isEdit, params.id, fetchListData]);
+		fetchLists();
+	}, []);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			if (isEdit) {
-				await axiosInstance.put(`/api/productList/${params.id}`, {
-					...formData,
-					ngaysua: new Date().toISOString(),
-				});
-			} else {
-				await axiosInstance.post("/api/productList", {
-					...formData,
-					ngaytao: new Date().toISOString(),
-					ngaysua: new Date().toISOString(),
-				});
-			}
-
+			await axiosInstance.post("/api/productCats", formData);
 			setModal({
 				isOpen: true,
-				message: t(isEdit ? "messages.updateSuccess" : "messages.createSuccess"),
+				message: t("messages.createSuccess"),
 				type: "success",
 			});
-
 			router.push("/admin/products");
-		} catch (error: any) {
-			console.error("Lỗi khi lưu:", error);
-			const errorMessage =
-				error.response?.data?.message ||
-				t(isEdit ? "messages.updateFailed" : "messages.createFailed");
+		} catch (error) {
+			console.error("Error creating product category:", error);
 			setModal({
 				isOpen: true,
-				message: errorMessage,
+				message: t("messages.createFailed"),
 				type: "error",
 			});
 		}
 	};
 
+	const convertToSlug = (text: string): string => {
+		return text
+			.toLowerCase()
+			.normalize("NFD")
+			.replace(/[\u0300-\u036f]/g, "") // Bỏ dấu tiếng Việt
+			.replace(/[đĐ]/g, "d") // Thay đ/Đ thành d
+			.replace(/[^a-z0-9\s-]/g, "") // Chỉ giữ lại chữ thường, số và dấu gạch ngang
+			.replace(/\s+/g, "-") // Thay khoảng trắng bằng dấu gạch ngang
+			.replace(/-+/g, "-") // Xóa các dấu gạch ngang liên tiếp
+			.trim(); // Xóa khoảng trắng đầu/cuối
+	};
 	return (
-		<AdminLayout pageName={t("create") + " " + t("productList")}>
+		<AdminLayout pageName={t("createCat")}>
 			<Modal
 				isOpen={modal.isOpen}
 				message={modal.message}
 				type={modal.type}
 				onClose={() => setModal((prev) => ({ ...prev, isOpen: false }))}
 			/>
-
 			<div className="w-full max-w-2xl mx-auto px-4 py-6">
 				<form onSubmit={handleSubmit} className="space-y-6">
+					<div>
+						<label
+							htmlFor="id_list"
+							className="block text-sm font-medium text-gray-700 dark:text-white mb-2"
+						>
+							{t("productList")}
+						</label>
+						<select
+							id="id_list"
+							value={formData.id_list}
+							onChange={(e) =>
+								setFormData((prev) => ({
+									...prev,
+									id_list: Number(e.target.value),
+								}))
+							}
+							className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:text-gray-700 focus:border-indigo-500 focus:ring-indigo-500"
+							required
+						>
+							<option value="">{t("selectProductList")}</option>
+							{lists.map((list) => (
+								<option key={list.id} value={list.id}>
+									{list.ten_vi}
+								</option>
+							))}
+						</select>
+					</div>
 					<LanguageTabs activeTab={activeTab} onTabChange={setActiveTab} t={t} />
-
 					{activeTab === "vi" ? (
 						<>
 							<InputSm
@@ -139,29 +133,26 @@ export default function ListForm() {
 								value={formData.ten_vi}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 									const newTenVi = e.target.value;
-									setFormData((prev) => ({ 
-										...prev, 
+									setFormData((prev) => ({
+										...prev,
 										ten_vi: newTenVi,
-										tenkhongdau: convertToSlug(newTenVi)
+										tenkhongdau: convertToSlug(newTenVi),
 									}));
 								}}
 								placeholder={t("name")}
 								name="ten_vi"
+								required
 							/>
-
 							<div>
-								<InputTextarea
+								<InputArea
 									title={t("description")}
-									value={formData.mota_vi || ""}
+									value={formData.description_vi}
 									onChange={(e) =>
-										setFormData((prev) => ({
-											...prev,
-											mota_vi: e.target.value,
-										}))
+										setFormData({ ...formData, description_vi: e.target.value })
 									}
 									language={t("vn")}
 									placeholder={t("description")}
-									name="mota_vi"
+									name="description_vi"
 								/>
 							</div>
 
@@ -170,7 +161,7 @@ export default function ListForm() {
 								language={t("vn")}
 								value={formData.title_vi}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({ ...prev, title_vi: e.target.value }))
+									setFormData({ ...formData, title_vi: e.target.value })
 								}
 								placeholder={t("title")}
 								name="title_vi"
@@ -181,10 +172,7 @@ export default function ListForm() {
 								language={t("vn")}
 								value={formData.keywords_vi}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({
-										...prev,
-										keywords_vi: e.target.value,
-									}))
+									setFormData({ ...formData, keywords_vi: e.target.value })
 								}
 								placeholder={t("keywords")}
 								name="keywords_vi"
@@ -197,25 +185,22 @@ export default function ListForm() {
 								language={t("en")}
 								value={formData.ten_en}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({ ...prev, ten_en: e.target.value }))
+									setFormData({ ...formData, ten_en: e.target.value })
 								}
 								placeholder={t("name")}
 								name="ten_en"
 							/>
 
 							<div>
-								<InputTextarea
+								<InputArea
 									title={t("description")}
-									value={formData.mota_en || ""}
+									value={formData.description_en}
 									onChange={(e) =>
-										setFormData((prev) => ({
-											...prev,
-											mota_en: e.target.value,
-										}))
+										setFormData({ ...formData, description_en: e.target.value })
 									}
 									language={t("en")}
 									placeholder={t("description")}
-									name="mota_en"
+									name="description_en"
 								/>
 							</div>
 
@@ -224,7 +209,7 @@ export default function ListForm() {
 								language={t("en")}
 								value={formData.title_en}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({ ...prev, title_en: e.target.value }))
+									setFormData({ ...formData, title_en: e.target.value })
 								}
 								placeholder={t("title")}
 								name="title_en"
@@ -235,10 +220,7 @@ export default function ListForm() {
 								language={t("en")}
 								value={formData.keywords_en}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({
-										...prev,
-										keywords_en: e.target.value,
-									}))
+									setFormData({ ...formData, keywords_en: e.target.value })
 								}
 								placeholder={t("keywords")}
 								name="keywords_en"
@@ -250,7 +232,7 @@ export default function ListForm() {
 						title={t("url")}
 						value={formData.tenkhongdau}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							setFormData((prev) => ({ ...prev, tenkhongdau: e.target.value }))
+							setFormData({ ...formData, tenkhongdau: e.target.value })
 						}
 						name="tenkhongdau"
 						placeholder={t("url")}
@@ -306,35 +288,6 @@ export default function ListForm() {
 							</select>
 						</div>
 					</div>
-
-					{isEdit && (
-						<div className="grid grid-cols-2 gap-4">
-							<div>
-								<label className="block text-sm font-medium text-gray-700">
-									{t("createdAt")}
-								</label>
-								<input
-									type="text"
-									value={new Date(formData.ngaytao || "").toLocaleDateString()}
-									disabled
-									readOnly
-									className="p-2 mt-1 block w-full rounded-md border-gray-300 bg-gray-100 dark:text-gray-700"
-								/>
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700">
-									{t("updatedAt")}
-								</label>
-								<input
-									type="text"
-									value={new Date(formData.ngaysua || "").toLocaleDateString()}
-									disabled
-									readOnly
-									className="p-2 mt-1 block w-full rounded-md border-gray-300 bg-gray-100 dark:text-gray-700"
-								/>
-							</div>
-						</div>
-					)}
 
 					<div className="flex justify-end space-x-3">
 						<Button

@@ -2,11 +2,11 @@ export interface Product {
 	id: number;
 	id_list: number;
 	id_item: number;
+	id_cat: number;
 	list_ten_vi?: string;
 	list_ten_en?: string;
 	cat_ten_vi?: string;
 	cat_ten_en?: string;
-	id_cat: number;
 	noibat: number;
 	photo: string;
 	thumb: string;

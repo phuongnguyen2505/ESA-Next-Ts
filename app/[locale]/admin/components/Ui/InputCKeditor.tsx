@@ -7,6 +7,8 @@ interface InputCKeditorProps {
 	onChange: (data: string) => void;
 	language?: string;
 	editorConfig?: any;
+	placeholder?: string;
+	name?: string;
 }
 
 const InputCKeditor = ({
@@ -15,6 +17,8 @@ const InputCKeditor = ({
 	onChange,
 	language,
 	editorConfig,
+	placeholder,
+	name,
 }: InputCKeditorProps) => {
 	return (
 		<div>
@@ -30,6 +34,8 @@ const InputCKeditor = ({
 						const data = editor.getData();
 						onChange(data);
 					}}
+					placeholder={placeholder}
+					name={name}
 				/>
 			</div>
 		</div>

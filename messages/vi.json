@@ -49,12 +49,18 @@
 		"addProduct": "Thêm sản phẩm",
 		"addCategory": "Thêm danh mục",
 		"addList": "Thêm danh sách",
+		"createCat": "Tạo danh mục",
 		"productCode": "Mã sản phẩm",
 		"productList": "Danh sách sản phẩm",
+		"productCat": "Danh mục sản phẩm",
+		"selectProductList": "Chọn danh sách sản phẩm",
+		"selectCategory": "Chọn danh mục",
 		"priority": "Ưu tiên",
 		"status": "Trạng thái",
 		"url": "Đường dẫn",
 		"productGroup": "Nhóm sản phẩm",
+		"confirm": "Xác nhận",
+		"confirmDelete": "Bạn có chắc chắn muốn xóa mục này?",
 
 		"actions": "Hành động",
 		"active": "Hoạt động",
@@ -63,6 +69,9 @@
 		"featured": "Nổi bật",
 
 		"editProductList": "Chỉnh sửa danh sách sản phẩm",
+		"editProductCat": "Chỉnh sửa danh mục sản phẩm",
+
+		"autoGenerate": "Tự động sinh mã",
 
 		"messages": {
 			"deleteSuccess": "Xóa thành công",
@@ -73,7 +82,14 @@
 			"updateFailed": "Cập nhật thất bại",
 			"createFailed": "Tạo mới thất bại",
 			"createSuccess": "Tạo mới thành công",
-			"loadDataError": "Lỗi tải dữ liệu"
-		}
+			"loadDataError": "Lỗi tải dữ liệu",
+			"fetchError": "Lỗi khi tải dữ liệu sản phẩm",
+			"invalidData": "Dữ liệu không hợp lệ",
+			"itemNotFound": "Mục không tồn tại",
+			"notAuthorized": "Không có quyền truy cập"
+		},
+		"tags": "Tags",
+		"editProduct": "Chỉnh sửa sản phẩm",
+		"back": "Quay lại"
 	}
 }
