@@ -23,18 +23,14 @@ export default function EditProductCat({ params }: { params: Promise<{ id: strin
     const t = useTranslations('admin');
     const router = useRouter();
     const resolvedParams = use(params);
-    const [activeTab, setActiveTab] = useState<"vi" | "en">("vi");
+    const [activeTab, setActiveTab] = useState<"en">("en");
     const [lists, setLists] = useState<ProductList[]>([]);
     const [formData, setFormData] = useState<Partial<ProductCat>>({
         id_list: 0,
-        ten_vi: '',
         ten_en: '',
         tenkhongdau: '',
-        title_vi: '',
         title_en: '',
-        keywords_vi: '',
         keywords_en: '',
-        description_vi: '',
         description_en: '',
         hienthi: 1,
         noibat: 0
@@ -153,86 +149,42 @@ export default function EditProductCat({ params }: { params: Promise<{ id: strin
                             <option value="">{t("selectProductList")}</option>
                             {lists.map(list => (
                                 <option key={list.id} value={list.id.toString()}>
-                                    {activeTab === "vi" ? list.ten_vi : list.ten_en}
-                            </option>
-                        ))}
+                                    {list.ten_en}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
-                    <LanguageTabs activeTab={activeTab} onTabChange={setActiveTab} t={t} />
-
-                    {activeTab === "vi" ? (
-                        <>
-                            <InputSm
-                                title={t('name')}
-                                language={t('vn')}
-                                value={formData.ten_vi}
-                                onChange={handleChange}
-                                placeholder={t('name')}
-                                name="ten_vi"
-                                required
-                            />
-                            <InputSm
-                                title={t('title')}
-                                language={t('vn')}
-                                value={formData.title_vi}
-                                onChange={handleChange}
-                                placeholder={t('title')}
-                                name="title_vi"
-                            />
-                            <InputSm
-                                title={t('keywords')}
-                                language={t('vn')}
-                                value={formData.keywords_vi}
-                                onChange={handleChange}
-                                placeholder={t('keywords')}
-                                name="keywords_vi"
-                            />
-                            <InputSm
-                                title={t('description')}
-                                language={t('vn')}
-                                value={formData.description_vi}
-                                onChange={handleChange}
-                                placeholder={t('description')}
-                                name="description_vi"
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <InputSm
-                                title={t('name')}
-                                language={t('en')}
-                                value={formData.ten_en}
-                                onChange={handleChange}
-                                placeholder={t('name')}
-                                name="ten_en"
-                            />
-                            <InputSm
-                                title={t('title')}
-                                language={t('en')}
-                                value={formData.title_en}
-                                onChange={handleChange}
-                                placeholder={t('title')}
-                                name="title_en"
-                            />
-                            <InputSm
-                                title={t('keywords')}
-                                language={t('en')}
-                                value={formData.keywords_en}
-                                onChange={handleChange}
-                                placeholder={t('keywords')}
-                                name="keywords_en"
-                            />
-                            <InputSm
-                                title={t('description')}
-                                language={t('en')}
-                                value={formData.description_en}
-                                onChange={handleChange}
-                                placeholder={t('description')}
-                                name="description_en"
-                            />
-                        </>
-                    )}
+                    <>
+                        <InputSm
+                            title={t('name')}
+                            value={formData.ten_en}
+                            onChange={handleChange}
+                            placeholder={t('name')}
+                            name="ten_en"
+                        />
+                        <InputSm
+                            title={t('title')}
+                            value={formData.title_en}
+                            onChange={handleChange}
+                            placeholder={t('title')}
+                            name="title_en"
+                        />
+                        <InputSm
+                            title={t('keywords')}
+                            value={formData.keywords_en}
+                            onChange={handleChange}
+                            placeholder={t('keywords')}
+                            name="keywords_en"
+                        />
+                        <InputSm
+                            title={t('description')}
+                            value={formData.description_en}
+                            onChange={handleChange}
+                            placeholder={t('description')}
+                            name="description_en"
+                        />
+                    </>
 
                     <InputSm
                         title={t("url")}

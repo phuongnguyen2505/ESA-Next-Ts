@@ -4,7 +4,6 @@ interface InputTextareaProps {
 	onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	placeholder?: string;
 	rows?: number;
-	language?: string;
 	name?: string;
 }
 
@@ -14,13 +13,12 @@ const InputTextarea = ({
 	onChange,
 	placeholder,
 	rows = 3,
-	language,
 	name,
 }: InputTextareaProps) => {
 	return (
 		<div>
 			<label className="block text-sm font-medium mb-1">
-				{title} {language && `(${language})`}
+				{title}
 			</label>
 			<textarea
 				name={name}

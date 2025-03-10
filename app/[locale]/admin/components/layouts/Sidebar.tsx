@@ -1,20 +1,9 @@
 import Image from "next/image";
 import Menu from "../Ui/Menu";
 import Switch from "@/app/components/Ui/Switch";
-import React, { useState } from "react";
+import React from "react";
 
-interface SidebarProps {
-	toggleDarkMode: () => void;
-}
-
-export default function Sidebar({ toggleDarkMode }: SidebarProps) {
-	const [darkMode, setDarkMode] = useState(false);
-
-	const handleToggle = (checked: boolean) => {
-		setDarkMode(checked);
-		toggleDarkMode();
-	};
-
+export default function Sidebar() {
 	return (
 		<div className="w-64 bg-gray-800 text-white p-6 flex flex-col justify-evenly items-center gap-5 shadow-lg shadow-orange-950">
 			<div className="text-center mb-6 w-20 h-20">
@@ -28,7 +17,7 @@ export default function Sidebar({ toggleDarkMode }: SidebarProps) {
 				/>
 			</div>
 			<Menu />
-			<Switch checked={darkMode} onChange={handleToggle} />
+			<Switch />
 		</div>
 	);
 }

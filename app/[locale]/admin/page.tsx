@@ -4,24 +4,23 @@ import { ReactNode, useEffect, useState } from "react";
 import Sidebar from "./components/layouts/Sidebar";
 import Header from "./components/layouts/Header";
 import Breadcrumb from "@/app/components/Ui/Breadcrumb";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-interface AdminLayoutProps {
-	children?: React.ReactNode;
-	params: {
-		locale?: string;
-	};
-}
-
-export default function AdminLayout({ children = null, params }: AdminLayoutProps) {
+export default function AdminLayout({
+	children,
+}: {
+	children: ReactNode;
+}) {
 	const t = useTranslations("admin");
 	const [darkMode, setDarkMode] = useState(false);
 	const router = useRouter();
 	const pathname = usePathname();
+	const params = useParams();
+	const locale = (params && params.locale) || "en";
 
 	useEffect(() => {
-		// Xử lý dark mode
+		// Dark mode handling
 		const isDarkMode = localStorage.getItem("darkMode") === "true";
 		setDarkMode(isDarkMode);
 		if (isDarkMode) {
@@ -32,20 +31,20 @@ export default function AdminLayout({ children = null, params }: AdminLayoutProp
 	}, []);
 
 	useEffect(() => {
-		// Chuyển hướng client-side
-		router.push("/admin/dashboard");
-	}, [router]);
+		// Client-side redirect
+		router.push(`/${locale}/admin/dashboard`);
+	}, [router, locale]);
 
 	const getCurrentLocale = (): string => {
-		if (!pathname) return "vi";
+		if (!pathname) return "en";
 		const segments = pathname.split("/");
-		return segments[1] || "vi";
+		return segments[1] || "en";
 	};
 
 	const createLocalePath = (path: string): string => {
-		const locale = getCurrentLocale();
+		const currentLocale = getCurrentLocale();
 		const cleanPath = path.replace(/^\/+/, "");
-		return `/${locale}/${cleanPath}`;
+		return `/${currentLocale}/${cleanPath}`;
 	};
 
 	const toggleDarkMode = () => {

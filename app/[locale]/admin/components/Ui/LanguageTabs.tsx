@@ -16,7 +16,7 @@ const LanguageTabs = ({ activeTab, onTabChange, t }: LanguageTabsProps) => {
 				}`}
 				onClick={() => onTabChange("vi")}
 			>
-				{t("vn")}
+				{t("vi")}
 			</button>
 			<button
 				type="button"

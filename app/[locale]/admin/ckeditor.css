@@ -1,0 +1,15 @@
+.ck-editor__editable {
+    min-height: 300px;
+}
+
+.ck-editor__editable_inline {
+    padding: 0 2rem;
+}
+
+.ck.ck-toolbar {
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.ck.ck-editor__main > .ck-editor__editable {
+    border-radius: 0 0 0.375rem 0.375rem;
+}

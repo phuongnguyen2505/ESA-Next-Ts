@@ -1,17 +1,17 @@
 {
 	"home": {
 		"homepage": "Home",
-		"aboutus": "About Us",
+		"about": "About Us",
 		"products": "Products",
 		"services": "Services",
 		"news": "News",
 		"contact": "Contact",
 
-		"vn": "Vietnamese",
+		"vi": "Vietnamese",
 		"en": "English"
 	},
 	"admin": {
-		"vn": "Vietnamese",
+		"vi": "Vietnamese",
 		"en": "English",
 
 		"dashboard": "Dashboard",
@@ -32,6 +32,7 @@
 		"preview": "Preview",
 		"uploadImage": "Upload Image",
 		"uploadFile": "Upload File",
+		"file": "File",
 		"show": "Show",
 		"hide": "Hide",
 		"thumbnail": "Thumbnail",
@@ -72,7 +73,8 @@
 		"editProductList": "Edit Product List",
 		"editProductCat": "Edit Product Category",
 		"editProduct": "Edit Product",
-		
+		"uploadFailed": "Upload failed",
+		"browseImages": "Browse Images",
 
 		"autoGenerate": "Auto generate code",
 
@@ -91,8 +93,20 @@
 			"fetchError": "Error fetching product data",
 			"invalidData": "Invalid data",
 			"itemNotFound": "Item not found",
-			"notAuthorized": "Not authorized"
+			"notAuthorized": "Not authorized",
+			"uploadSuccess": "Successfully uploaded",
+			"loadFailed": "Load Failed"
 		},
-		"back": "Back"
+		"back": "Back",
+		"sort": {
+			"newest": "Newest",
+			"oldest": "Oldest",
+			"nameAsc": "Name (A-Z)",
+			"nameDesc": "Name (Z-A)",
+			"priorityAsc": "Priority Ascending",
+			"priorityDesc": "Priority Descending"
+		},
+		"imageManager": "Image Manager",
+		"select": "Select"
 	}
 }

@@ -3,13 +3,6 @@ import db from "@/lib/db";
 import { RowDataPacket } from 'mysql2';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-	console.log('API Request:', {
-		method: req.method,
-		query: req.query,
-		body: req.body,
-		headers: req.headers
-	});
-
 	const { id } = req.query;
 
 	if (!id) {
@@ -21,8 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			try {
 				const result = await new Promise<RowDataPacket[]>((resolve, reject) => {
 					db.query(
-						`SELECT p.*, pl.ten_vi as list_ten_vi, pl.ten_en as list_ten_en,
-							pc.ten_vi as cat_ten_vi, pc.ten_en as cat_ten_en
+						`SELECT p.*, pl.ten_en as list_ten_en,
+							pc.ten_en as cat_ten_en
 							FROM table_product p
 							LEFT JOIN table_product_list pl ON p.id_list = pl.id
 							LEFT JOIN table_product_cat pc ON p.id_cat = pc.id

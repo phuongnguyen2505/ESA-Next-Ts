@@ -8,27 +8,12 @@ import axiosInstance from "@/lib/axios";
 import Modal from "../../components/Ui/ModalAlert";
 import Button from "../../components/Ui/Button";
 import InputSm from "../../components/Ui/InputSm";
-import LanguageTabs from "../../components/Ui/LanguageTabs";
 import InputTextarea from "../../components/Ui/InputArea";
 import { ProductListFormData } from "@/types/productList";
-
 
 interface ApiResponse {
 	list: ProductListFormData;
 }
-
-// Thêm hàm chuyển đổi string thành URL friendly
-const convertToSlug = (text: string): string => {
-	return text
-		.toLowerCase()
-		.normalize('NFD')
-		.replace(/[\u0300-\u036f]/g, '')  // Bỏ dấu tiếng Việt
-		.replace(/[đĐ]/g, 'd')            // Thay đ/Đ thành d
-		.replace(/[^a-z0-9\s-]/g, '')     // Chỉ giữ lại chữ thường, số và dấu gạch ngang
-		.replace(/\s+/g, '-')             // Thay khoảng trắng bằng dấu gạch ngang
-		.replace(/-+/g, '-')              // Xóa các dấu gạch ngang liên tiếp
-		.trim();                          // Xóa khoảng trắng đầu/cuối
-};
 
 export default function ListForm() {
 	const t = useTranslations("admin");
@@ -37,26 +22,23 @@ export default function ListForm() {
 	const isEdit = params.action === "edit";
 
 	const [formData, setFormData] = useState<Partial<ProductListFormData>>({
-		ten_vi: "",
 		ten_en: "",
-		tenkhongdau: "",
-		title_vi: "",
 		title_en: "",
-		keywords_vi: "",
+		noidung_en: "",
+		mota_en: "",
 		keywords_en: "",
-		description_vi: "",
 		description_en: "",
 		hienthi: 1,
 		noibat: 0,
 		ngaytao: new Date(),
-		ngaysua: new Date()
+		ngaysua: new Date(),
+		tenkhongdau: "", // Thêm trường tenkhongdau
 	});
 
-	const [activeTab, setActiveTab] = useState<"vi" | "en">("vi");
 	const [modal, setModal] = useState({
 		isOpen: false,
-			message: "",
-			type: "success" as "success" | "error",
+		message: "",
+		type: "success" as "success" | "error",
 	});
 
 	const fetchListData = useCallback(async () => {
@@ -118,6 +100,15 @@ export default function ListForm() {
 		}
 	};
 
+	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newName = e.target.value;
+		setFormData((prev) => ({
+			...prev,
+			ten_en: newName,
+			tenkhongdau: newName.toLowerCase().replace(/\s+/g, '-'), // Tạo tenkhongdau tự động
+		}));
+	};
+
 	return (
 		<AdminLayout pageName={t("create") + " " + t("productList")}>
 			<Modal
@@ -129,122 +120,51 @@ export default function ListForm() {
 
 			<div className="w-full max-w-2xl mx-auto px-4 py-6">
 				<form onSubmit={handleSubmit} className="space-y-6">
-					<LanguageTabs activeTab={activeTab} onTabChange={setActiveTab} t={t} />
+					<InputSm
+						title={t("name")}
+						value={formData.ten_en}
+						onChange={handleNameChange} // Sử dụng hàm handleNameChange
+						placeholder={t("name")}
+						name="ten_en"
+					/>
 
-					{activeTab === "vi" ? (
-						<>
-							<InputSm
-								title={t("name")}
-								language={t("vn")}
-								value={formData.ten_vi}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-									const newTenVi = e.target.value;
-									setFormData((prev) => ({ 
-										...prev, 
-										ten_vi: newTenVi,
-										tenkhongdau: convertToSlug(newTenVi)
-									}));
-								}}
-								placeholder={t("name")}
-								name="ten_vi"
-							/>
+					<div>
+						<InputTextarea
+							title={t("description")}
+							value={formData.mota_en || ""}
+							onChange={(e) =>
+								setFormData((prev) => ({
+									...prev,
+									mota_en: e.target.value,
+								}))
+							}
+							placeholder={t("description")}
+							name="description_en"
+						/>
+					</div>
 
-							<div>
-								<InputTextarea
-									title={t("description")}
-									value={formData.mota_vi || ""}
-									onChange={(e) =>
-										setFormData((prev) => ({
-											...prev,
-											mota_vi: e.target.value,
-										}))
-									}
-									language={t("vn")}
-									placeholder={t("description")}
-									name="mota_vi"
-								/>
-							</div>
+					<InputSm
+						title={t("title")}
+						value={formData.title_en}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							setFormData((prev) => ({ ...prev, title_en: e.target.value }))
+						}
+						placeholder={t("title")}
+						name="title_en"
+					/>
 
-							<InputSm
-								title={t("title")}
-								language={t("vn")}
-								value={formData.title_vi}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({ ...prev, title_vi: e.target.value }))
-								}
-								placeholder={t("title")}
-								name="title_vi"
-							/>
-
-							<InputSm
-								title={t("keywords")}
-								language={t("vn")}
-								value={formData.keywords_vi}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({
-										...prev,
-										keywords_vi: e.target.value,
-									}))
-								}
-								placeholder={t("keywords")}
-								name="keywords_vi"
-							/>
-						</>
-					) : (
-						<>
-							<InputSm
-								title={t("name")}
-								language={t("en")}
-								value={formData.ten_en}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({ ...prev, ten_en: e.target.value }))
-								}
-								placeholder={t("name")}
-								name="ten_en"
-							/>
-
-							<div>
-								<InputTextarea
-									title={t("description")}
-									value={formData.mota_en || ""}
-									onChange={(e) =>
-										setFormData((prev) => ({
-											...prev,
-											mota_en: e.target.value,
-										}))
-									}
-									language={t("en")}
-									placeholder={t("description")}
-									name="mota_en"
-								/>
-							</div>
-
-							<InputSm
-								title={t("title")}
-								language={t("en")}
-								value={formData.title_en}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({ ...prev, title_en: e.target.value }))
-								}
-								placeholder={t("title")}
-								name="title_en"
-							/>
-
-							<InputSm
-								title={t("keywords")}
-								language={t("en")}
-								value={formData.keywords_en}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									setFormData((prev) => ({
-										...prev,
-										keywords_en: e.target.value,
-									}))
-								}
-								placeholder={t("keywords")}
-								name="keywords_en"
-							/>
-						</>
-					)}
+					<InputSm
+						title={t("keywords")}
+						value={formData.keywords_en}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							setFormData((prev) => ({
+								...prev,
+								keywords_en: e.target.value,
+							}))
+						}
+						placeholder={t("keywords")}
+						name="keywords_en"
+					/>
 
 					<InputSm
 						title={t("url")}

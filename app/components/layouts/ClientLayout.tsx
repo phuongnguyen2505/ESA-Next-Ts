@@ -4,6 +4,7 @@ import Navbar from "../common/Navbar";
 import Footer from "../common/Footer";
 import Head from 'next/head';
 import { useParams } from "next/navigation";
+import Banner from "../common/Banner";
 
 interface MetaData {
 	title_vi?: string;
@@ -33,7 +34,7 @@ export default function ClientLayout({
 		<>
 			<Head>
 				{/* Thẻ title */}
-				<title>{title || 'Your Website Name'}</title>
+				<title>{title || 'VESA Energy Saving'}</title>
 
 				{/* Thẻ meta cơ bản */}
 				<meta name="description" content={description || 'Default description'} />
@@ -43,15 +44,15 @@ export default function ClientLayout({
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				
 				{/* Thẻ meta cho Open Graph (Facebook) */}
-				<meta property="og:title" content={title || 'Your Website Name'} />
+				<meta property="og:title" content={title || 'VESA Energy Saving'} />
 				<meta property="og:description" content={description || 'Default description'} />
 				<meta property="og:type" content="website" />
-				<meta property="og:image" content="/path-to-your-default-image.jpg" />
-				<meta property="og:url" content="https://your-domain.com" />
+				<meta property="og:image" content="/images/shortcut.png" />
+				<meta property="og:url" content="https://vesaflow.com" />
 				
 				{/* Thẻ meta cho Twitter */}
 				<meta name="twitter:card" content="summary_large_image" />
-				<meta name="twitter:title" content={title || 'Your Website Name'} />
+				<meta name="twitter:title" content={title || 'VESA Energy Saving'} />
 				<meta name="twitter:description" content={description || 'Default description'} />
 				<meta name="twitter:image" content="/path-to-your-default-image.jpg" />
 				
@@ -61,13 +62,14 @@ export default function ClientLayout({
 				<meta charSet="UTF-8" />
 				
 				{/* Canonical URL */}
-				<link rel="canonical" href="https://your-domain.com" />
+				<link rel="canonical" href="https://vesaflow.com" />
 			</Head>
 
-			<section>
+			<section className="flex flex-col min-h-screen">
 				<Navbar />
-				<div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-mont-r)]">
-					<main className="w-full flex flex-col gap-8 row-start-2 items-center sm:items-start">
+				<Banner title="" des="" />
+				<div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-mont-r)]">
+					<main className="w-full flex flex-col gap-8 row-start-2 sm:items-start">
 						{children}
 					</main>
 				</div>

@@ -14,7 +14,7 @@ export interface About {
 	keywords_en: string;
 	description_vi: string;
 	description_en: string;
-	photo: string;
+	photo: string | null;
 	thumb: string;
 	stt: number;
 	hienthi: number;

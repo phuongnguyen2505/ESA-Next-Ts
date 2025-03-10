@@ -3,13 +3,13 @@
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import { useTranslations } from "next-intl";
-import LocaleSwitcher from "./components/Ui/LocaleSwitcher";
+// import LocaleSwitcher from "./components/Ui/LocaleSwitcher";
 
 export default function Home() {
 	const t = useTranslations("home");
 	return (
 		<>
-			<LocaleSwitcher />
+			{/* <LocaleSwitcher /> */}
 			<h1>{t("title")}</h1>
 			<p>{t("description")}</p>
 			<Navbar />

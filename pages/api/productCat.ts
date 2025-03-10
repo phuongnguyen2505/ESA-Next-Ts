@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		try {
 			const results: any = await new Promise((resolve, reject) => {
 				db.query(
-					`SELECT * FROM table_product_cat 
+					`SELECT id, id_list, ten_en, tenkhongdau, title_en, keywords_en, description_en, stt, hienthi, noibat, ngaytao, ngaysua FROM table_product_cat 
                     ORDER BY stt ASC, id DESC`,
 					(err, results) => {
 						if (err) reject(err);
@@ -18,14 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			const categories = results.map((item: any) => ({
 				id: item.id,
 				id_list: item.id_list,
-				ten_vi: item.ten_vi,
 				ten_en: item.ten_en,
 				tenkhongdau: item.tenkhongdau,
-				title_vi: item.title_vi,
 				title_en: item.title_en,
-				keywords_vi: item.keywords_vi,
 				keywords_en: item.keywords_en,
-				description_vi: item.description_vi,
 				description_en: item.description_en,
 				stt: item.stt,
 				hienthi: item.hienthi,
@@ -43,20 +39,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		try {
 			const data = req.body;
 			
-			console.log("Received data:", data);
-			
 			const query = "INSERT INTO table_product_cat SET ?";
 			
 			const insertData = {
 				id_list: data.id_list,
-				ten_vi: data.ten_vi,
 				ten_en: data.ten_en,
 				tenkhongdau: data.tenkhongdau,
-				title_vi: data.title_vi,
 				title_en: data.title_en,
-				keywords_vi: data.keywords_vi,
 				keywords_en: data.keywords_en,
-				description_vi: data.description_vi,
 				description_en: data.description_en,
 				hienthi: data.hienthi,
 				noibat: data.noibat,
@@ -70,7 +60,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						console.error("Database error:", err);
 						reject(err);
 					} else {
-						console.log("Insert result:", result);
 						resolve(result);
 					}
 				});

@@ -4,7 +4,6 @@ interface InputSmProps {
 	title: string;
 	onChange: any;
 	placeholder: string;
-	language?: string;
 	value?: string;
 	name: string;
 	readOnly?: boolean;
@@ -12,11 +11,11 @@ interface InputSmProps {
 	required?: boolean;
 }
 
-export default function InputSm({ title, onChange, placeholder, language, value, name, readOnly, disabled, required }: InputSmProps) {
+export default function InputSm({ title, onChange, placeholder, value, name, readOnly, disabled, required }: InputSmProps) {
 	return (
 		<>
 			<label className="block text-sm font-medium mb-1">
-				{title} {language && `(${language})`}
+				{title}
 			</label>
 			<input
 				type="text"

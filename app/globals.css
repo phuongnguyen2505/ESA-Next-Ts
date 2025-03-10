@@ -6,10 +6,11 @@
   --white: #ffffff;
   --black: #171717;
   --middle-black: #333;
+  --dark-blue: #23233d;
   --font-mont-r: 'Montserrat', sans-serif;
 }
 
 body {
   color: var(--black);
-  font-family: var(--font-mont-r); 
+  font-family: var(--font-mont-r);
 }

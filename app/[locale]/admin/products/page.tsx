@@ -14,9 +14,11 @@ import { RiPlayListAddFill } from "react-icons/ri";
 import { Product } from "@/types/Product";
 import { ProductList } from "@/types/productList";
 import { ProductCat } from "@/types/productCat";
+import SortSelect from "@/app/[locale]/admin/components/Ui/SortSelect";
 
 interface ProductMenuItem {
 	translationKey: string;
+	sortable?: boolean;
 }
 
 const truncateText = (text: string, maxLength: number = 20) => {
@@ -40,8 +42,8 @@ interface ApiResponse {
 const PRODUCT_LIST_MENU_ITEMS: ProductMenuItem[] = [
 	{ translationKey: "name" },
 	{ translationKey: "description" },
+	{ translationKey: "featured", sortable: true },
 	{ translationKey: "status" },
-	{ translationKey: "featured" },
 	{ translationKey: "actions" },
 ];
 
@@ -51,7 +53,7 @@ const PRODUCT_MENU_ITEMS: ProductMenuItem[] = [
 	{ translationKey: "name" },
 	{ translationKey: "list" },
 	{ translationKey: "category" },
-	{ translationKey: "priority" },
+	{ translationKey: "featured", sortable: true },
 	{ translationKey: "status" },
 	{ translationKey: "actions" },
 ];
@@ -59,10 +61,16 @@ const PRODUCT_MENU_ITEMS: ProductMenuItem[] = [
 const PRODUCT_CATEGORY_MENU_ITEMS: ProductMenuItem[] = [
 	{ translationKey: "name" },
 	{ translationKey: "productGroup" },
+	{ translationKey: "featured", sortable: true },
 	{ translationKey: "status" },
-	{ translationKey: "featured" },
 	{ translationKey: "actions" },
 ];
+
+// Thêm interface cho sorting
+interface SortConfig {
+	key: string;
+	direction: "asc" | "desc";
+}
 
 export default function Products() {
 	const t = useTranslations("admin");
@@ -89,115 +97,122 @@ export default function Products() {
 		id: null,
 	});
 	const [isLoading, setIsLoading] = useState(false);
-	const [updatingItems, setUpdatingItems] = useState<{[key: string]: boolean}>({});
+	const [updatingItems, setUpdatingItems] = useState<{ [key: string]: boolean }>({});
+	const [sortBy, setSortBy] = useState("newest");
+	const [sortConfig, setSortConfig] = useState<SortConfig>({
+		key: "ngaytao",
+		direction: "desc",
+	});
 
 	const handleToggleStatus = async (
 		id: number,
 		currentStatus: number,
 		type: "products" | "lists" | "categories" = "products",
-		field: "hienthi" | "noibat" = "hienthi"
+		field: "hienthi" | "noibat" = "hienthi",
 	) => {
 		const itemKey = `${type}-${id}-${field}`;
-		
+
 		try {
-			setUpdatingItems(prev => ({ ...prev, [itemKey]: true }));
-			
-			console.log('Current state:', {
+			setUpdatingItems((prev) => ({ ...prev, [itemKey]: true }));
+
+			console.log("Current state:", {
 				id,
 				currentStatus,
 				type,
-				field
+				field,
 			});
 
 			const newStatus = currentStatus ? 0 : 1;
-			
+
 			const endpoints = {
 				products: `/api/products/${id}`,
 				lists: `/api/productList/${id}`,
-				categories: `/api/productCat/${id}`
+				categories: `/api/productCat/${id}`,
 			};
 
-			console.log('Sending request:', {
+			console.log("Sending request:", {
 				url: endpoints[type],
-				method: 'PATCH',
-				data: { [field]: newStatus }
+				method: "PATCH",
+				data: { [field]: newStatus },
 			});
 
-			const response = await axiosInstance.patch<ApiResponse>(
-				endpoints[type],
-				{ [field]: newStatus }
-			);
+			const response = await axiosInstance.patch<ApiResponse>(endpoints[type], {
+				[field]: newStatus,
+			});
 
-			console.log('Response:', response.data);
+			console.log("Response:", response.data);
 
 			if (response.data.success) {
 				const updateState = {
 					products: setProducts,
 					lists: setLists,
-					categories: setCategories
+					categories: setCategories,
 				};
 
 				updateState[type]((prevItems: any[]) =>
 					prevItems.map((item) =>
-						item.id === id ? { ...item, [field]: newStatus } : item
-					)
+						item.id === id ? { ...item, [field]: newStatus } : item,
+					),
 				);
 
 				setModal({
 					isOpen: true,
 					message: t("messages.updateSuccess"),
-					type: "success"
+					type: "success",
 				});
 			}
 		} catch (error: any) {
-			console.error('Error details:', error.response?.data);
-			
+			console.error("Error details:", error.response?.data);
+
 			setModal({
 				isOpen: true,
 				message: error.response?.data?.error || t("messages.updateFailed"),
-				type: "error"
-			});
-		} finally {
-			setUpdatingItems(prev => ({ ...prev, [itemKey]: false }));
-		}
-	};
-
-	const fetchData = useCallback(async (type: "products" | "lists" | "categories") => {
-		setIsLoading(true);
-		try {
-			let endpoint = "";
-			switch (type) {
-				case "products":
-					endpoint = "/api/products";
-					const productRes = await axiosInstance.get<{ products: Product[] }>(
-						endpoint,
-					);
-					setProducts(productRes.data.products);
-					break;
-				case "lists":
-					endpoint = "/api/productList";
-					const listRes = await axiosInstance.get<ProductListResponse>(endpoint);
-					setLists(listRes.data.lists);
-					break;
-				case "categories":
-					endpoint = "/api/productCat";
-					const catRes = await axiosInstance.get<ProductCategoriesResponse>(
-						endpoint,
-					);
-					setCategories(catRes.data.categories);
-					break;
-			}
-		} catch (error) {
-			console.error(`Error fetching ${type}:`, error);
-			setModal({
-				isOpen: true,
-				message: t("messages.loadFailed"),
 				type: "error",
 			});
 		} finally {
-			setIsLoading(false);
+			setUpdatingItems((prev) => ({ ...prev, [itemKey]: false }));
 		}
-	}, [t]);
+	};
+
+	const fetchData = useCallback(
+		async (type: "products" | "lists" | "categories") => {
+			setIsLoading(true);
+			try {
+				let endpoint = "";
+				switch (type) {
+					case "products":
+						endpoint = "/api/products";
+						const productRes = await axiosInstance.get<{ products: Product[] }>(
+							endpoint,
+						);
+						setProducts(productRes.data.products);
+						break;
+					case "lists":
+						endpoint = "/api/productList";
+						const listRes = await axiosInstance.get<ProductListResponse>(endpoint);
+						setLists(listRes.data.lists);
+						break;
+					case "categories":
+						endpoint = "/api/productCat";
+						const catRes = await axiosInstance.get<ProductCategoriesResponse>(
+							endpoint,
+						);
+						setCategories(catRes.data.categories);
+						break;
+				}
+			} catch (error) {
+				console.error(`Error fetching ${type}:`, error);
+				setModal({
+					isOpen: true,
+					message: t("messages.loadFailed") || "Lỗi khi tải dữ liệu",
+					type: "error",
+				});
+			} finally {
+				setIsLoading(false);
+			}
+		},
+		[t],
+	);
 
 	useEffect(() => {
 		if (activeTab === "products") {
@@ -247,7 +262,7 @@ export default function Products() {
 			console.error("Error deleting item:", error);
 			setModal({
 				isOpen: true,
-				message: t("messages.deleteFailed"),
+				message: t("messages.deleteFailed") || "Lỗi khi xóa dữ liệu",
 				type: "error",
 			});
 		} finally {
@@ -258,12 +273,66 @@ export default function Products() {
 	const getImageUrl = (photo: string | null) => {
 		if (!photo) return "/no-image.png";
 		if (photo.startsWith("http")) return photo;
-		
+
 		try {
 			return `/uploads/products/${photo}`;
 		} catch {
 			return "/no-image.png";
 		}
+	};
+
+	// Hàm xử lý sort
+	const handleSort = (key: string) => {
+		setSortConfig((prev) => ({
+			key,
+			direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+		}));
+	};
+
+	// Hàm render sort icon
+	const renderSortIcon = (key: string) => {
+		if (sortConfig.key !== key) {
+			return <span className="ml-1 text-gray-400">↕</span>;
+		}
+		return sortConfig.direction === "asc" ? (
+			<span className="ml-1">↑</span>
+		) : (
+			<span className="ml-1">↓</span>
+		);
+	};
+
+	// Hàm sort items
+	const sortItems = (items: any[]) => {
+		const sorted = [...items];
+		return sorted.sort((a, b) => {
+			if (sortConfig.key === "ngaytao") {
+				const result = new Date(a.ngaytao).getTime() - new Date(b.ngaytao).getTime();
+				return sortConfig.direction === "asc" ? result : -result;
+			}
+			if (sortConfig.key === "ten_en") {
+				const result = a.ten_en.localeCompare(b.ten_en);
+				return sortConfig.direction === "asc" ? result : -result;
+			}
+			if (sortConfig.key === "stt") {
+				return sortConfig.direction === "asc" ? a.stt - b.stt : b.stt - a.stt;
+			}
+			if (sortConfig.key === "mota_en") {
+				const result = (a.mota_en || "").localeCompare(b.mota_en || "");
+				return sortConfig.direction === "asc" ? result : -result;
+			}
+			if (sortConfig.key === "id_list") {
+				const aName = lists.find((l) => l.id === a.id_list)?.ten_en || "";
+				const bName = lists.find((l) => l.id === b.id_list)?.ten_en || "";
+				const result = aName.localeCompare(bName);
+				return sortConfig.direction === "asc" ? result : -result;
+			}
+			if (sortConfig.key === "noibat") {
+				return sortConfig.direction === "asc"
+					? a.noibat - b.noibat
+					: b.noibat - a.noibat;
+			}
+			return 0;
+		});
 	};
 
 	return (
@@ -285,9 +354,9 @@ export default function Products() {
 			/>
 
 			<div className="w-full px-4 py-6 space-y-6">
-				<div className="flex justify-between items-center">
+				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-xl font-bold">{t("productList")}</h2>
-					<div className="space-x-2">
+					<div className="space-x-2 flex items-center gap-1">
 						<Link href="/admin/products/create">
 							<Button type="button">
 								<FaPlus className="h-5 w-5" />
@@ -303,6 +372,7 @@ export default function Products() {
 								<FaFolderPlus className="h-5 w-5" />
 							</Button>
 						</Link>
+						<SortSelect value={sortBy} onChange={setSortBy} t={t} />
 					</div>
 				</div>
 
@@ -349,20 +419,54 @@ export default function Products() {
 									{PRODUCT_MENU_ITEMS.map((item) => (
 										<th
 											key={item.translationKey}
-											className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+											className={`px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
+												item.sortable ||
+												["name", "description", "productGroup"].includes(
+													item.translationKey,
+												)
+													? "cursor-pointer hover:bg-gray-200"
+													: ""
+											}`}
+											onClick={() => {
+												if (item.translationKey === "name")
+													handleSort("ten_en");
+												if (item.translationKey === "description")
+													handleSort("mota_en");
+												if (item.translationKey === "productGroup")
+													handleSort("id_list");
+												if (item.translationKey === "featured")
+													handleSort("noibat");
+											}}
 										>
-											{t(item.translationKey)}
+											<div className="flex items-center justify-center">
+												{t(item.translationKey)}
+												{(item.sortable ||
+													["name", "description", "productGroup"].includes(
+														item.translationKey,
+													)) &&
+													renderSortIcon(
+														item.translationKey === "name"
+															? "ten_en"
+															: item.translationKey === "description"
+															? "mota_en"
+															: item.translationKey === "productGroup"
+															? "id_list"
+															: item.translationKey === "featured"
+															? "noibat"
+															: "",
+													)}
+											</div>
 										</th>
 									))}
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-gray-200 dark:divide-gray-600 text-center">
-								{products.map((product) => (
+								{sortItems(products).map((product) => (
 									<tr key={product.id}>
 										<td className="px-6 py-4 whitespace-nowrap">
 											<Image
 												src={getImageUrl(product.photo)}
-												alt={product.ten_vi}
+												alt={product.ten_en}
 												width={100}
 												height={100}
 												className="object-cover rounded"
@@ -376,15 +480,15 @@ export default function Products() {
 											{product.masp}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											<div className="max-w-xs" title={product.ten_vi}>
-												{truncateText(product.ten_vi)}
+											<div className="max-w-xs" title={product.ten_en}>
+												{truncateText(product.ten_en)}
 											</div>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											{product.list_ten_vi ?? "-"}
+											{product.list_ten_en ?? "-"}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											{product.cat_ten_vi ?? "-"}
+											{product.cat_ten_en ?? "-"}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
 											<button
@@ -406,34 +510,55 @@ export default function Products() {
 											</button>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											<button
-												onClick={() => handleToggleStatus(product.id, product.hienthi, "products", "hienthi")}
-												disabled={updatingItems[`products-${product.id}-hienthi`]}
-												className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer transition-colors duration-200 ${
-													product.hienthi
-														? "bg-green-100 text-green-800 hover:bg-green-200"
-														: "bg-red-100 text-red-800 hover:bg-red-200"
-												} ${updatingItems[`products-${product.id}-hienthi`] ? 'opacity-50 cursor-not-allowed' : ''}`}
-												title={product.hienthi ? t("show") : t("hide")}
-											>
-												{product.hienthi ? <FaCheck className="h-4 w-4" /> : <FaTimes className="h-4 w-4" />}
-											</button>
+											<div className="flex items-center justify-center">
+												<button
+													onClick={() =>
+														handleToggleStatus(
+															product.id,
+															product.hienthi,
+															"products",
+															"hienthi",
+														)
+													}
+													disabled={
+														updatingItems[`products-${product.id}-hienthi`]
+													}
+													className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer transition-colors duration-200 ${
+														product.hienthi
+															? "bg-green-100 text-green-800 hover:bg-green-200"
+															: "bg-red-100 text-red-800 hover:bg-red-200"
+													} ${
+														updatingItems[`products-${product.id}-hienthi`]
+															? "opacity-50 cursor-not-allowed"
+															: ""
+													}`}
+													title={product.hienthi ? t("show") : t("hide")}
+												>
+													{product.hienthi ? (
+														<FaCheck className="h-4 w-4" />
+													) : (
+														<FaTimes className="h-4 w-4" />
+													)}
+												</button>
+											</div>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-											<Link
-												href={`/admin/products/editProduct/${product.id}`}
-												className="text-indigo-600 hover:text-indigo-900 mr-4 inline-block"
-												title={t("edit")}
-											>
-												<BiEdit className="h-5 w-5" />
-											</Link>
-											<button
-												onClick={() => showDeleteConfirm(product.id)}
-												className="text-red-600 hover:text-red-900 inline-block"
-												title={t("delete")}
-											>
-												<BiTrash className="h-5 w-5" />
-											</button>
+											<div className="flex items-center justify-center">
+												<Link
+													href={`/admin/products/editProduct/${product.id}`}
+													className="text-indigo-600 hover:text-indigo-900 mr-4 inline-block"
+													title={t("edit")}
+												>
+													<BiEdit className="h-5 w-5" />
+												</Link>
+												<button
+													onClick={() => showDeleteConfirm(product.id)}
+													className="text-red-600 hover:text-red-900 inline-block"
+													title={t("delete")}
+												>
+													<BiTrash className="h-5 w-5" />
+												</button>
+											</div>
 										</td>
 									</tr>
 								))}
@@ -450,22 +575,56 @@ export default function Products() {
 									{PRODUCT_LIST_MENU_ITEMS.map((item) => (
 										<th
 											key={item.translationKey}
-											className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+											className={`px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
+												item.sortable ||
+												["name", "description", "productGroup"].includes(
+													item.translationKey,
+												)
+													? "cursor-pointer hover:bg-gray-200"
+													: ""
+											}`}
+											onClick={() => {
+												if (item.translationKey === "name")
+													handleSort("ten_en");
+												if (item.translationKey === "description")
+													handleSort("mota_en");
+												if (item.translationKey === "productGroup")
+													handleSort("id_list");
+												if (item.translationKey === "featured")
+													handleSort("noibat");
+											}}
 										>
-											{t(item.translationKey)}
+											<div className="flex items-center justify-center">
+												{t(item.translationKey)}
+												{(item.sortable ||
+													["name", "description", "productGroup"].includes(
+														item.translationKey,
+													)) &&
+													renderSortIcon(
+														item.translationKey === "name"
+															? "ten_en"
+															: item.translationKey === "description"
+															? "mota_en"
+															: item.translationKey === "productGroup"
+															? "id_list"
+															: item.translationKey === "featured"
+															? "noibat"
+															: "",
+													)}
+											</div>
 										</th>
 									))}
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-gray-200 dark:divide-gray-600 text-center">
-								{lists.map((list) => (
+								{sortItems(lists).map((list) => (
 									<tr key={list.id}>
 										<td className="px-6 py-4 whitespace-nowrap">
-											{list.ten_vi}
+											{list.ten_en}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											<div className="max-w-xs" title={list.mota_vi}>
-												{truncateText(list.mota_vi || "-", 50)}
+											<div className="max-w-xs" title={list.mota_en}>
+												{truncateText(list.mota_en || "-", 50)}
 											</div>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
@@ -488,45 +647,47 @@ export default function Products() {
 											</button>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											<button
-												onClick={() =>
-													handleToggleStatus(
-														list.id,
-														list.hienthi,
-														"lists",
-														"hienthi",
-													)
-												}
-												className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer transition-colors duration-200 ${
-													list.hienthi
-														? "bg-green-100 text-green-800 hover:bg-green-200"
-														: "bg-red-100 text-red-800 hover:bg-red-200"
-												}`}
-												title={list.hienthi ? t("show") : t("hide")}
-											>
-												{list.hienthi ? (
-													<FaCheck className="h-4 w-4" />
-												) : (
-													<FaTimes className="h-4 w-4" />
-												)}
-											</button>
+											<div className="flex items-center justify-center">
+												<button
+													onClick={() =>
+														handleToggleStatus(
+															list.id,
+															list.hienthi,
+															"lists",
+															"hienthi",
+														)
+													}
+													className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+														list.hienthi
+															? "bg-green-100 text-green-800"
+															: "bg-red-100 text-red-800"
+													}`}
+												>
+													{list.hienthi ? (
+														<FaCheck className="h-4 w-4" />
+													) : (
+														<FaTimes className="h-4 w-4" />
+													)}
+												</button>
+											</div>
 										</td>
-
 										<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-											<Link
-												href={`/admin/products/editList/${list.id}`}
-												className="text-indigo-600 hover:text-indigo-900 mr-4 inline-block"
-												title={t("edit")}
-											>
-												<BiEdit className="h-5 w-5" />
-											</Link>
-											<button
-												onClick={() => showDeleteConfirm(list.id)}
-												className="text-red-600 hover:text-red-900 inline-block"
-												title={t("delete")}
-											>
-												<BiTrash className="h-5 w-5" />
-											</button>
+											<div className="flex items-center justify-center">
+												<Link
+													href={`/admin/products/editList/${list.id}`}
+													className="text-indigo-600 hover:text-indigo-900 mr-4 inline-block"
+													title={t("edit")}
+												>
+													<BiEdit className="h-5 w-5" />
+												</Link>
+												<button
+													onClick={() => showDeleteConfirm(list.id)}
+													className="text-red-600 hover:text-red-900 inline-block"
+													title={t("delete")}
+												>
+													<BiTrash className="h-5 w-5" />
+												</button>
+											</div>
 										</td>
 									</tr>
 								))}
@@ -543,22 +704,50 @@ export default function Products() {
 									{PRODUCT_CATEGORY_MENU_ITEMS.map((item) => (
 										<th
 											key={item.translationKey}
-											className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+											className={`px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
+												item.sortable ||
+												["name", "productGroup"].includes(item.translationKey)
+													? "cursor-pointer hover:bg-gray-200"
+													: ""
+											}`}
+											onClick={() => {
+												if (item.translationKey === "name")
+													handleSort("ten_en");
+												if (item.translationKey === "productGroup")
+													handleSort("id_list");
+												if (item.translationKey === "featured")
+													handleSort("noibat");
+											}}
 										>
-											{t(item.translationKey)}
+											<div className="flex items-center justify-center">
+												{t(item.translationKey)}
+												{(item.sortable ||
+													["name", "productGroup"].includes(
+														item.translationKey,
+													)) &&
+													renderSortIcon(
+														item.translationKey === "name"
+															? "ten_en"
+															: item.translationKey === "productGroup"
+															? "id_list"
+															: item.translationKey === "featured"
+															? "noibat"
+															: "",
+													)}
+											</div>
 										</th>
 									))}
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-gray-200 dark:divide-gray-600 text-center">
-								{categories.map((category) => (
+								{sortItems(categories).map((category) => (
 									<tr key={category.id}>
 										<td className="px-6 py-4 whitespace-nowrap">
-											{category.ten_vi}
+											{category.ten_en}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
 											{lists.find((list) => list.id === category.id_list)
-												?.ten_vi || "-"}
+												?.ten_en || "-"}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
 											<button
@@ -580,44 +769,48 @@ export default function Products() {
 											</button>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											<button
-												onClick={() =>
-													handleToggleStatus(
-														category.id,
-														category.hienthi,
-														"categories",
-														"hienthi",
-													)
-												}
-												className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer transition-colors duration-200 ${
-													category.hienthi
-														? "bg-green-100 text-green-800 hover:bg-green-200"
-														: "bg-red-100 text-red-800 hover:bg-red-200"
-												}`}
-												title={category.hienthi ? t("show") : t("hide")}
-											>
-												{category.hienthi ? (
-													<FaCheck className="h-4 w-4" />
-												) : (
-													<FaTimes className="h-4 w-4" />
-												)}
-											</button>
+											<div className="flex items-center justify-center">
+												<button
+													onClick={() =>
+														handleToggleStatus(
+															category.id,
+															category.hienthi,
+															"categories",
+															"hienthi",
+														)
+													}
+													className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer transition-colors duration-200 ${
+														category.hienthi
+															? "bg-green-100 text-green-800 hover:bg-green-200"
+															: "bg-red-100 text-red-800 hover:bg-red-200"
+													}`}
+													title={category.hienthi ? t("show") : t("hide")}
+												>
+													{category.hienthi ? (
+														<FaCheck className="h-4 w-4" />
+													) : (
+														<FaTimes className="h-4 w-4" />
+													)}
+												</button>
+											</div>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-											<Link
-												href={`/admin/products/editCat/${category.id}`}
-												className="text-indigo-600 hover:text-indigo-900 mr-4 inline-block"
-												title={t("edit")}
-											>
-												<BiEdit className="h-5 w-5" />
-											</Link>
-											<button
-												onClick={() => showDeleteConfirm(category.id)}
-												className="text-red-600 hover:text-red-900 inline-block"
-												title={t("delete")}
-											>
-												<BiTrash className="h-5 w-5" />
-											</button>
+											<div className="flex items-center justify-center">
+												<Link
+													href={`/admin/products/editCat/${category.id}`}
+													className="text-indigo-600 hover:text-indigo-900 mr-4 inline-block"
+													title={t("edit")}
+												>
+													<BiEdit className="h-5 w-5" />
+												</Link>
+												<button
+													onClick={() => showDeleteConfirm(category.id)}
+													className="text-red-600 hover:text-red-900 inline-block"
+													title={t("delete")}
+												>
+													<BiTrash className="h-5 w-5" />
+												</button>
+											</div>
 										</td>
 									</tr>
 								))}

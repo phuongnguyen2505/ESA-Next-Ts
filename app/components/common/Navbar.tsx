@@ -24,22 +24,11 @@ export default function Navbar() {
 	return (
 		<>
 			<nav
-				className={`navbar p-4 sticky top-0 left-0 z-50 bg-transparent font-medium ${
+				className={`navbar p-4 sticky bg-white backdrop-blur-lg top-0 z-50 border-b border-gray-100/20 font-medium ${
 					scrolled ? "scrolled" : ""
 				}`}
 			>
-				<div className="flex justify-between items-center mx-24">
-					<div className="max-w-36 flex justify-center items-center flex-1">
-						<Link href="./" className="flex h-12 max-h-32 relative items-center">
-							<Image
-								src="/images/final.png"
-								alt="Logo"
-								className="logo top-7 relative"
-								width={150}
-								height={50}
-							/>
-						</Link>
-					</div>
+				<div className="flex justify-evenly items-center mx-24">
 					<Menu />
 				</div>
 			</nav>

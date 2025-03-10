@@ -9,7 +9,7 @@ export default function Switch() {
 			<input
 				type="checkbox"
 				className="sr-only"
-				checked={theme === 'dark'}
+				checked={theme === 'light'}
 				onChange={toggleTheme}
 			/>
 			<div className="w-12 h-5 bg-[rgb(135,150,165)] rounded-full relative">

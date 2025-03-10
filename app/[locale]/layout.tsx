@@ -1,13 +1,14 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { locales } from "@/i18n.config";
 import { Metadata } from "next";
 import ClientWrapper from "./ClientWrapper";
 import { Locale, i18n } from "@/i18n.config";
+import Script from 'next/script'
 
 interface LocaleLayoutProps {
 	children: ReactNode;
-	params: Promise<{ locale: string; lang: Locale; }>;
+	params: Promise<{ locale: string; lang: Locale }>;
 }
 
 export async function generateStaticParams() {
@@ -15,8 +16,8 @@ export async function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-	title: "ESA Industry",
-	description: "ESA Industry Description",
+	title: 'VESA - Energy Saving Solutions',
+	description: 'Professional VESA device energy-saving solutions',
 };
 
 type Locale = "en" | "vi";
@@ -26,7 +27,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 	const locale = resolvedParams.locale as Locale;
 
 	if (!locales.includes(locale)) {
-		return redirect("/vi");
+		return redirect("/en");
 	}
 
 	let messages;
@@ -37,14 +38,19 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 		}
 	} catch (error) {
 		console.error("Error loading messages:", error);
-		return redirect("/vi");
+		return redirect("/en");
 	}
 
 	return (
 		<html>
+			<head>
+				<Script src="https://cdn.ckbox.io/ckbox/2.4.0/ckbox.js" strategy="lazyOnload" />
+			</head>
 			<body suppressHydrationWarning={true}>
 				<ClientWrapper locale={locale} messages={messages.default}>
-					{children}
+					<div className="relative">
+						{children}
+					</div>
 				</ClientWrapper>
 			</body>
 		</html>

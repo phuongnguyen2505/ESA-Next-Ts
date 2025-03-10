@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		try {
 			const result = await new Promise<RowDataPacket>((resolve, reject) => {
 				db.query(
-					"SELECT * FROM table_product_cat WHERE id = ?",
+					"SELECT id, id_list, ten_en, title_en, keywords_en, description_en, hienthi, noibat FROM table_product_cat WHERE id = ?",
 					[id],
 					(err, results: RowDataPacket[]) => {
 						if (err) reject(err);
@@ -32,13 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			const {
 				id,
 				id_list,
-				ten_vi,
 				ten_en,
-				title_vi,
 				title_en,
-				keywords_vi,
 				keywords_en,
-				description_vi,
 				description_en,
 				hienthi,
 				noibat,
@@ -49,28 +45,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			const result = await new Promise((resolve, reject) => {
 				db.query(
 					`UPDATE table_product_cat SET 
-						id_list = ?,
-						ten_vi = ?, 
+						id_list = ?, 
 						ten_en = ?, 
-						title_vi = ?, 
-						title_en = ?,
-						keywords_vi = ?, 
-						keywords_en = ?,
-						description_vi = ?, 
-						description_en = ?,
+						title_en = ?, 
+						keywords_en = ?, 
+						description_en = ?, 
 						hienthi = ?, 
-						noibat = ?,
+						noibat = ?, 
 						ngaysua = NOW()
 					WHERE id = ?`,
 					[
 						id_list,
-						ten_vi,
 						ten_en,
-						title_vi,
 						title_en,
-						keywords_vi,
 						keywords_en,
-						description_vi,
 						description_en,
 						hienthi,
 						noibat,

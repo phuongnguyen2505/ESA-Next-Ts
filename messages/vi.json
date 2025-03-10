@@ -11,7 +11,7 @@
 		"en": "Tiếng Anh"
 	},
 	"admin": {
-		"vn": "Tiếng Việt",
+		"vi": "Tiếng Việt",
 		"en": "Tiếng Anh",
 
 		"dashboard": "Dashboard",
@@ -32,6 +32,7 @@
 		"preview": "Xem trước",
 		"uploadImage": "Tải lên ảnh",
 		"uploadFile": "Tải lên file",
+		"file": "File",
 		"show": "Hiển thị",
 		"hide": "Ẩn",
 		"thumbnail": "Hình ảnh thu nhỏ",
@@ -70,9 +71,10 @@
 
 		"editProductList": "Chỉnh sửa danh sách sản phẩm",
 		"editProductCat": "Chỉnh sửa danh mục sản phẩm",
+		"uploadFailed": "Tải lên thất bại",
+		"browseImages": "Chọn hình ảnh",
 
 		"autoGenerate": "Tự động sinh mã",
-
 		"messages": {
 			"deleteSuccess": "Xóa thành công",
 			"deleteFailed": "Xóa thất bại",
@@ -86,10 +88,21 @@
 			"fetchError": "Lỗi khi tải dữ liệu sản phẩm",
 			"invalidData": "Dữ liệu không hợp lệ",
 			"itemNotFound": "Mục không tồn tại",
-			"notAuthorized": "Không có quyền truy cập"
+			"notAuthorized": "Không có quyền truy cập",
+			"uploadSuccess": "Tải lên thành công"
 		},
 		"tags": "Tags",
 		"editProduct": "Chỉnh sửa sản phẩm",
-		"back": "Quay lại"
+		"back": "Quay lại",
+		"sort": {
+			"newest": "Mới nhất",
+			"oldest": "Cũ nhất",
+			"nameAsc": "Tên (A-Z)",
+			"nameDesc": "Tên (Z-A)",
+			"priorityAsc": "Thứ tự tăng dần",
+			"priorityDesc": "Thứ tự giảm dần"
+		},
+		"imageManager": "Quản lý hình ảnh",
+		"select": "Chọn"
 	}
 }

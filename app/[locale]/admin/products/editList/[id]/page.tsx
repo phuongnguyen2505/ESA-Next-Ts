@@ -8,7 +8,6 @@ import Modal from "../../../components/Ui/ModalAlert";
 import Button from "../../../components/Ui/Button";
 import InputSm from '../../../components/Ui/InputSm';
 import InputTextarea from '../../../components/Ui/InputArea';
-import LanguageTabs from '../../../components/Ui/LanguageTabs';
 import { useTranslations } from 'next-intl';
 
 interface ProductListResponse {
@@ -19,19 +18,12 @@ export default function EditProductList({ params }: { params: Promise<{ id: stri
     const t = useTranslations('admin');
     const router = useRouter();
     const resolvedParams = use(params);
-    const [activeTab, setActiveTab] = useState<"vi" | "en">("vi");
     const [formData, setFormData] = useState<Partial<ProductList>>({
-        ten_vi: '',
         ten_en: '',
-        mota_vi: '',
         mota_en: '',
-        noidung_vi: '',
         noidung_en: '',
-        title_vi: '',
         title_en: '',
-        keywords_vi: '',
         keywords_en: '',
-        description_vi: '',
         description_en: '',
         hienthi: 1,
         noibat: 0
@@ -119,83 +111,36 @@ export default function EditProductList({ params }: { params: Promise<{ id: stri
             
             <div className="w-full max-w-2xl mx-auto px-4 py-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <LanguageTabs activeTab={activeTab} onTabChange={setActiveTab} t={t} />
-
-                    {activeTab === "vi" ? (
-                        <>
-                            <InputSm
-                                title={t('name')}
-                                language={t('vn')}
-                                value={formData.ten_vi}
-                                onChange={handleChange}
-                                placeholder={t('name')}
-                                name="ten_vi"
-                            />
-                            <div>
-                                <InputTextarea
-                                    title={t('description')}
-                                    language={t('vn')}
-                                    value={formData.mota_vi || ''}
-                                    onChange={handleChange}
-                                    placeholder={t('description')}
-                                    name="mota_vi"
-                                />
-                            </div>
-                            <InputSm
-                                title={t('title')}
-                                language={t('vn')}
-                                value={formData.title_vi}
-                                onChange={handleChange}
-                                placeholder={t('title')}
-                                name="title_vi"
-                            />
-                            <InputSm
-                                title={t('keywords')}
-                                language={t('vn')}
-                                value={formData.keywords_vi}
-                                onChange={handleChange}
-                                placeholder={t('keywords')}
-                                name="keywords_vi"
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <InputSm
-                                title={t('name')}
-                                language={t('en')}
-                                value={formData.ten_en}
-                                onChange={handleChange}
-                                placeholder={t('name')}
-                                name="ten_en"
-                            />
-                            <div>
-                                <InputTextarea
-                                    title={t('description')}
-                                    language={t('en')}
-                                    value={formData.mota_en || ''}
-                                    onChange={handleChange}
-                                    placeholder={t('description')}
-                                    name="mota_en"
-                                />
-                            </div>
-                            <InputSm
-                                title={t('title')}
-                                language={t('en')}
-                                value={formData.title_en}
-                                onChange={handleChange}
-                                placeholder={t('title')}
-                                name="title_en"
-                            />
-                            <InputSm
-                                title={t('keywords')}
-                                language={t('en')}
-                                value={formData.keywords_en}
-                                onChange={handleChange}
-                                placeholder={t('keywords')}
-                                name="keywords_en"
-                            />
-                        </>
-                    )}
+                    <InputSm
+                        title={t('name')}
+                        value={formData.ten_en}
+                        onChange={handleChange}
+                        placeholder={t('name')}
+                        name="ten_en"
+                    />
+                    <div>
+                        <InputTextarea
+                            title={t('description')}
+                            value={formData.mota_en || ''}
+                            onChange={handleChange}
+                            placeholder={t('description')}
+                            name="mota_en"
+                        />
+                    </div>
+                    <InputSm
+                        title={t('title')}
+                        value={formData.title_en}
+                        onChange={handleChange}
+                        placeholder={t('title')}
+                        name="title_en"
+                    />
+                    <InputSm
+                        title={t('keywords')}
+                        value={formData.keywords_en}
+                        onChange={handleChange}
+                        placeholder={t('keywords')}
+                        name="keywords_en"
+                    />
 
                     <div className="flex space-x-4">
                         <label className="flex items-center space-x-2">
