@@ -421,7 +421,6 @@ export default function CreateProduct() {
 					imagePreview={imagePreview}
 					currentImage={formData.photo}
 					t={t}
-					required
 				/>
 
 				<InputCheckbox

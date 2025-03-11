@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import db from "../../lib/db";
+import db from "@/lib/db";
 import { Footer } from "../../types/Footer";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -10,10 +10,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				res.status(500).json({ error: "Error fetching footer" });
 				return;
 			}
-			const footers: Footer[] = results.map((footer: any) => ({
+			const footers: Footer[] = (results as any[]).map((footer: any) => ({
 				id: footer.id,
 				noidung_vi: footer.noidung_vi,
-                noidung_en: footer.noidung_en,
+				noidung_en: footer.noidung_en,
 			}));
 			res.status(200).json({ footers });
 		});

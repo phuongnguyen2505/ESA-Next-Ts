@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -11,7 +13,7 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-	{ key: "home", path: "/", translationKey: "homepage" },
+	{ key: "home", path: "/en", translationKey: "homepage" },
 	{ key: "about", path: "/about", translationKey: "about" },
 	{ key: "products", path: "/products", translationKey: "products" },
 	{ key: "services", path: "/services", translationKey: "services" },

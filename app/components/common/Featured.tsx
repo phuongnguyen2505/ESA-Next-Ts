@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState} from 'react'
 import Link from 'next/link'
 import axios from 'axios'
@@ -64,11 +66,13 @@ export default function Featured() {
                             {/* Product Image */}
                             <div className="relative aspect-square mb-6 overflow-hidden rounded-xl">
                                 <div 
-                                    className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-500"
-                                    style={{
-                                        backgroundImage: `url(${product.photo.startsWith('http') ? product.photo : `/uploads/products/${product.photo}`})`
-                                    }}
+                                    className={`absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-500 product-bg-${product.id}`}
                                 />
+                                <style jsx>{`
+                                    .product-bg-${product.id} {
+                                        background-image: url(${product.photo.startsWith('http') ? product.photo : `/uploads/products/${product.photo}`});
+                                    }
+                                `}</style>
                                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300" />
                             </div>
 

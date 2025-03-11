@@ -16,7 +16,7 @@ const bannerItems = [
 
 export default function Banner({}: BannerProps) {
     const pathname = usePathname();
-    const currentPath = pathname.split('/en/')[1];
+    const currentPath = pathname?.split('/en/')[1] || "";
     
     const currentBanner = bannerItems.find(item => item.path === currentPath) 
         || { title: "Welcome", des: "Welcome to our website" };

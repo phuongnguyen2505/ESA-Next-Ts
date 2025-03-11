@@ -1,3 +1,5 @@
+"use client";
+export const dynamic = "force-dynamic"
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef } from "react";
@@ -8,9 +10,9 @@ export default function Footer() {
 	const section2Ref = useRef<HTMLDivElement>(null);
 
 	const socialLinks = [
-		{ icon: "/images/fb.svg", href: "/", alt: "Facebook" },
-		{ icon: "/images/zalo.svg", href: "/", alt: "Zalo" },
-		{ icon: "/images/ytb.svg", href: "/", alt: "Youtube" },
+		{ icon: "/images/fb.svg", href: "/en", alt: "Facebook" },
+		{ icon: "/images/zalo.svg", href: "/en", alt: "Zalo" },
+		{ icon: "/images/ytb.svg", href: "/en", alt: "Youtube" },
 	];
 
 	useEffect(() => {

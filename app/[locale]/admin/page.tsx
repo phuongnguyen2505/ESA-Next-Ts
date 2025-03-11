@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { ReactNode, useEffect, useState } from "react";
 import Sidebar from "./components/layouts/Sidebar";
@@ -7,11 +8,7 @@ import Breadcrumb from "@/app/components/Ui/Breadcrumb";
 import { useRouter, usePathname, useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-export default function AdminLayout({
-	children,
-}: {
-	children: ReactNode;
-}) {
+export default function AdminLayout({}: {}) {
 	const t = useTranslations("admin");
 	const [darkMode, setDarkMode] = useState(false);
 	const router = useRouter();
@@ -68,7 +65,7 @@ export default function AdminLayout({
 				<div className="bg-gray-200 dark:bg-gray-700 p-4">
 					<Breadcrumb pageName="Dashboard" url="/admin/dashboard" />
 				</div>
-				<div className="p-4 overflow-auto flex-1">{children}</div>
+				<div className="p-4 overflow-auto flex-1"></div>
 			</div>
 		</div>
 	);

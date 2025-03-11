@@ -105,7 +105,7 @@ export default function ListForm() {
 		setFormData((prev) => ({
 			...prev,
 			ten_en: newName,
-			tenkhongdau: newName.toLowerCase().replace(/\s+/g, '-'), // Tạo tenkhongdau tự động
+			tenkhongdau: newName.toLowerCase().replace(/\s+/g, "-"), // Tạo tenkhongdau tự động
 		}));
 	};
 
@@ -234,6 +234,7 @@ export default function ListForm() {
 									{t("createdAt")}
 								</label>
 								<input
+									placeholder="Created At"
 									type="text"
 									value={new Date(formData.ngaytao || "").toLocaleDateString()}
 									disabled
@@ -246,6 +247,7 @@ export default function ListForm() {
 									{t("updatedAt")}
 								</label>
 								<input
+									placeholder="Update At"
 									type="text"
 									value={new Date(formData.ngaysua || "").toLocaleDateString()}
 									disabled

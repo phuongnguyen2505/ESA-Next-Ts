@@ -4,7 +4,8 @@ import { useRouter, useParams } from "next/navigation";
 
 export default function Login() {
     const router = useRouter();
-    const { locale } = useParams(); // Lấy locale từ params
+    const params = useParams();
+    const locale = params?.locale as string; // Lấy locale từ params
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");

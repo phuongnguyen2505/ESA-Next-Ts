@@ -1,12 +1,10 @@
 "use client";
-
 import AdminLayout from "@/app/[locale]/admin/components/layouts/AdminLayout";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 import "ckeditor5/ckeditor5.css";
-import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import InputSm from "../components/Ui/InputSm";
 import InputTextarea from "../components/Ui/InputArea";
 import InputImage from "../components/Ui/InputImage";
@@ -216,7 +214,6 @@ export default function AboutUs() {
 						imagePreview={imagePreview}
 						currentImage={abouts.photo}
 						t={t}
-						required
 					/>
 				</div>
 

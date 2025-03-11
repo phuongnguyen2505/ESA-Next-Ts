@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { locales } from "@/i18n.config";
 import { Metadata } from "next";
 import ClientWrapper from "./ClientWrapper";
-import { Locale, i18n } from "@/i18n.config";
+import { i18n } from "@/i18n.config";
 import Script from 'next/script'
 
 interface LocaleLayoutProps {
@@ -26,7 +26,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 	const resolvedParams = await params;
 	const locale = resolvedParams.locale as Locale;
 
-	if (!locales.includes(locale)) {
+	if (!(locales as Locale[]).includes(locale)) {
 		return redirect("/en");
 	}
 

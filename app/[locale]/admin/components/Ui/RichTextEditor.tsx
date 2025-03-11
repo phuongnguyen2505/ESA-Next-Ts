@@ -34,8 +34,6 @@ const InputCKeditor = ({
 						const data = editor.getData();
 						onChange(data);
 					}}
-					placeholder={placeholder}
-					name={name}
 				/>
 			</div>
 		</div>

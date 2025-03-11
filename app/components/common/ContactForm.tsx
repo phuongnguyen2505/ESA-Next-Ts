@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,7 +13,7 @@ export default function ContactForm() {
 	const headingRef = useRef(null);
 	const formRef = useRef(null);
 	const infoRef = useRef(null);
-	const socialRef = useRef(null);
+	const socialRef = useRef<HTMLDivElement>(null);
 
 	const [formData, setFormData] = useState<Contact>({
 		name: "",

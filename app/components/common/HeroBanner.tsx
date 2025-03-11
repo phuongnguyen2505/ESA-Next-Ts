@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Viewmore from "../Ui/Viewmore";
 import { useEffect, useRef } from "react";

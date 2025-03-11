@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
@@ -6,7 +8,7 @@ export default function AboutUs() {
 	const sectionRef = useRef(null);
 	const headingRef = useRef(null);
 	const textRef = useRef(null);
-	const statsRef = useRef(null);
+	const statsRef = useRef<HTMLDivElement>(null);
 	const missionRef = useRef(null);
 	const visionRef = useRef(null);
 	const fig1Ref = useRef(null);
@@ -55,20 +57,22 @@ export default function AboutUs() {
 			);
 
 			// Stats animation
-			gsap.fromTo(
-				statsRef.current?.children,
-				{ scale: 0.8, opacity: 0 },
-				{
-					scale: 1,
-					opacity: 1,
-					stagger: 0.2,
-					duration: 0.6,
-					scrollTrigger: {
-						trigger: statsRef.current,
-						start: "top 85%",
+			if (statsRef.current) {
+				gsap.fromTo(
+					Array.from(statsRef.current.children),
+					{ scale: 0.8, opacity: 0 },
+					{
+						scale: 1,
+						opacity: 1,
+						stagger: 0.2,
+						duration: 0.6,
+						scrollTrigger: {
+							trigger: statsRef.current,
+							start: "top 85%",
+						},
 					},
-				},
-			);
+				);
+			}
 
 			// Mission box animation
 			gsap.fromTo(
