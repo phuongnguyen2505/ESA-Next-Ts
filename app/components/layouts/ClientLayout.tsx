@@ -2,6 +2,7 @@
 
 import Navbar from "../common/Navbar";
 import Footer from "../common/Footer";
+import Banner from "../common/Banner";
 import Head from "next/head";
 
 interface MetaData {
@@ -45,6 +46,7 @@ export default function ClientLayout({
 
 			<section className="flex flex-col min-h-screen">
 				<Navbar />
+				<Banner />
 				<div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-mont-r)]">
 					<main className="w-full flex flex-col gap-8 row-start-2 sm:items-start">
 						{children}
