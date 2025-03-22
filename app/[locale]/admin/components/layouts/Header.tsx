@@ -5,21 +5,20 @@ import LocaleSwitcher from "@/app/components/Ui/LocaleSwitcher";
 import Link from "next/link";
 
 const Header = () => {
-	const [username, setUsername] = useState("");
+	const [ten, setTen] = useState("");
 
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
-				const response = await fetch("/api/auth/login", {
+				const response = await fetch("/api/auth/me", {
 					credentials: "include",
 				});
-
 				if (response.ok) {
 					const data = await response.json();
-					setUsername(data.username);
+					setTen(data.ten);
 				}
 			} catch (error) {
-				console.error("Failed to fetch user:", error);
+				console.error("Không thể lấy thông tin người dùng:", error);
 			}
 		};
 		fetchUser();
@@ -32,7 +31,7 @@ const Header = () => {
 			</div>
 			<div className="flex items-center space-x-6">
 				<LocaleSwitcher />
-				<span>Welcome, {username}</span>
+				<span>Welcome, {ten}</span>
 				<button
 					onClick={async () => {
 						try {
