@@ -276,9 +276,7 @@ export default function ContactForm() {
 									<div>
 										<h4 className="text-lg font-medium">Address</h4>
 										<p className="text-white text-opacity-80">
-											123 Business Avenue
-											<br />
-											Innovation City, IN 45678
+											
 										</p>
 									</div>
 								</div>
@@ -300,7 +298,7 @@ export default function ContactForm() {
 									</div>
 									<div>
 										<h4 className="text-lg font-medium">Phone</h4>
-										<p className="text-white text-opacity-80">(123) 456-7890</p>
+										<p className="text-white text-opacity-80"></p>
 									</div>
 								</div>
 								<div className="flex items-start">
@@ -322,7 +320,7 @@ export default function ContactForm() {
 									<div>
 										<h4 className="text-lg font-medium">Email</h4>
 										<p className="text-white text-opacity-80">
-											info@brandname.com
+											
 										</p>
 									</div>
 								</div>
