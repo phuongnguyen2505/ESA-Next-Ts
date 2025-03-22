@@ -53,10 +53,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				tenkhongdau: item.tenkhongdau,
 			}));
 
-			res.status(200).json({ products });
+			res.status(200).json({ success: true, products });
 		} catch (error) {
 			console.error("Lỗi khi lấy sản phẩm:", error);
-			res.status(500).json({ error: "Lỗi máy chủ nội bộ", details: error instanceof Error ? error.message : "Lỗi không xác định" });
+			res.status(500).json({ success: false, error: "Lỗi máy chủ nội bộ", details: error instanceof Error ? error.message : "Lỗi không xác định" });
 		}
 	} else if (req.method === "POST") {
 		try {
@@ -68,14 +68,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				maxFileSize: 5 * 1024 * 1024, // 5MB
 			});
 
-			const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>(
-				(resolve, reject) => {
-					form.parse(req, (err, fields, files) => {
-						if (err) reject(err);
-						resolve([fields, files]);
-					});
-				},
-			);
+			const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+				form.parse(req, (err, fields, files) => {
+					if (err) reject(err);
+					else resolve([fields, files]);
+				});
+			});
 
 			// Xử lý file ảnh
 			const photo = files.photo;
@@ -96,11 +94,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 			if (file && Array.isArray(file) && file[0]) {
 				const fileItem = file[0];
-				fileName = fileItem.originalFilename || "default_name"; // Đảm bảo có tên file mặc định nếu không tồn tại
-				const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, "_"); // Loại bỏ ký tự không hợp lệ
-
+				fileName = fileItem.originalFilename || "default_name";
+				const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, "_");
 				const newPath = path.join(uploadDir, sanitizedFileName);
-
 				fs.renameSync(fileItem.filepath, newPath);
 			}
 
@@ -131,15 +127,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				});
 			});
 
-			res.status(201).json({ message: "Tạo thành công" });
+			res.status(201).json({ success: true, message: "Tạo thành công" });
 		} catch (error) {
 			console.error("Lỗi khi tạo sản phẩm:", error);
-			res.status(500).json({
-				error: "Lỗi máy chủ nội bộ",
-				details: error instanceof Error ? error.message : "Lỗi không xác định",
-			});
+			res.status(500).json({ success: false, error: "Lỗi máy chủ nội bộ", details: error instanceof Error ? error.message : "Lỗi không xác định" });
 		}
 	} else {
-		res.status(405).json({ error: "Phương thức không được phép" });
+		res.status(405).json({ success: false, error: "Phương thức không được phép" });
 	}
 }
