@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 type User = {
 	id: number;
 	username: string;
-	password: string; // In production, store a bcrypt hash here.
+	password: string;
 	ten: string;
 	dienthoai: string;
 	role: string;
@@ -44,7 +44,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			password,
 		);
 
-		// Trim both values to avoid extra spaces
 		if (user.password.trim() !== password.trim()) {
 			console.log("Password mismatch");
 			return res.status(401).json({ message: "Tài khoản hoặc mật khẩu không đúng" });
@@ -54,13 +53,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			{
 				id: user.id,
 				username: user.username,
+				ten: user.ten,
 				role: user.role,
 			},
 			process.env.JWT_SECRET || "",
 			{ expiresIn: "1h" },
 		);
 
-		// Set JWT token in an HTTP-only cookie
+		// Set token vào cookie HTTP-only
 		res.setHeader(
 			"Set-Cookie",
 			serialize("token", token, {

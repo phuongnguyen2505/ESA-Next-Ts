@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import "./admin.scss";
+import "./admin.css";
 
 interface AdminLayoutProps {
 	children: ReactNode;

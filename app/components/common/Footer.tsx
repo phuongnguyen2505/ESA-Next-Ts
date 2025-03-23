@@ -15,23 +15,6 @@ export default function Footer() {
 		{ icon: "/images/ytb.svg", href: "/en", alt: "Youtube" },
 	];
 
-	useEffect(() => {
-		if (typeof window !== "undefined" && section2Ref.current) {
-			gsap.registerPlugin(ScrollTrigger);
-			gsap.from(section2Ref.current.children, {
-				opacity: 0,
-				y: 50,
-				duration: 0.8,
-				stagger: 0.3,
-				ease: "power3.out",
-				scrollTrigger: {
-					trigger: section2Ref.current,
-					start: "top 80%",
-				},
-			});
-		}
-	}, []);
-
 	return (
 		<footer className="ft-bg flex flex-col rounded-t-xl h-[400px] justify-between bg-gray-800 bg-contain bg-no-repeat bg-center">
 			{/* Logo Section */}
@@ -45,14 +28,13 @@ export default function Footer() {
 						priority
 					/>
 				</div>
-				<h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+				<h2 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
 					ENERGY SAVING SOLUTIONS
 				</h2>
 			</section>
 
 			{/* Main Content Section */}
 			<section
-				ref={section2Ref}
 				className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-24 py-8"
 			></section>
 

@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import db from "@/lib/db";
 import formidable from "formidable";
 import path from "path";
+import fs from "fs";
 
 export const config = {
 	api: {
@@ -24,28 +25,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				(resolve, reject) => {
 					form.parse(req, (err, fields, files) => {
 						if (err) reject(err);
-						resolve([fields, files]);
+						else resolve([fields, files]);
 					});
 				},
 			);
 
-			// Xử lý file ảnh
+			// Xử lý file ảnh mới (nếu có)
 			const photo = files.photo;
 			let photoName = "";
-
 			if (photo && Array.isArray(photo) && photo[0]) {
 				const file = photo[0];
 				photoName = file.newFilename;
+
+				// Lấy sản phẩm cũ để lấy tên ảnh cũ
+				const oldProduct: any = await new Promise((resolve, reject) => {
+					db.query(
+						"SELECT photo FROM table_product WHERE id = ?",
+						[id],
+						(err, results) => {
+							if (err) reject(err);
+							else resolve((results as any[])[0]);
+						},
+					);
+				});
+				// Nếu có ảnh cũ, xóa file ảnh cũ
+				if (oldProduct && oldProduct.photo) {
+					const oldPhotoPath = path.join(
+						process.cwd(),
+						"public/uploads/products",
+						oldProduct.photo,
+					);
+					if (fs.existsSync(oldPhotoPath)) {
+						fs.unlinkSync(oldPhotoPath);
+					}
+				}
 			}
 
+			// Xử lý file đính kèm (nếu có)
 			const file = files.file;
 			let fileName = "";
-
 			if (file && Array.isArray(file) && file[0]) {
 				const fileItem = file[0];
-				// Lấy tên file gốc và đảm bảo nó an toàn
-				fileName = fileItem.originalFilename || "default_name";
-				fileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, "_"); // Lọc bỏ ký tự không hợp lệ
+				// Sử dụng tên file gốc, lọc bỏ ký tự không hợp lệ
+				fileName = (fileItem.originalFilename || "default_name").replace(
+					/[^a-zA-Z0-9_.-]/g,
+					"_",
+				);
 			}
 
 			const updateData: { [key: string]: any } = {
@@ -75,7 +100,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				tenkhongdau: fields.tenkhongdau?.[0],
 			};
 
-			// Loại bỏ các trường không cần cập nhật
+			// Loại bỏ các trường không cần cập nhật (giá trị undefined)
 			Object.keys(updateData).forEach(
 				(key) => updateData[key] === undefined && delete updateData[key],
 			);

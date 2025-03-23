@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import Image from "next/image";
 
 export default function AboutUs() {
 	const sectionRef = useRef(null);
@@ -25,10 +26,10 @@ export default function AboutUs() {
 		if (typeof window !== "undefined") {
 			gsap.registerPlugin(ScrollTrigger);
 
-			// Main heading animation
+			// Heading animation
 			gsap.fromTo(
 				headingRef.current,
-				{ x: -100, opacity: 0 },
+				{ x: -50, opacity: 0 },
 				{
 					x: 0,
 					opacity: 1,
@@ -40,10 +41,10 @@ export default function AboutUs() {
 				},
 			);
 
-			// Main text animation
+			// Text animation
 			gsap.fromTo(
 				textRef.current,
-				{ y: 50, opacity: 0 },
+				{ y: 20, opacity: 0 },
 				{
 					y: 0,
 					opacity: 1,
@@ -77,7 +78,7 @@ export default function AboutUs() {
 			// Mission box animation
 			gsap.fromTo(
 				missionRef.current,
-				{ x: -50, opacity: 0 },
+				{ x: -30, opacity: 0 },
 				{
 					x: 0,
 					opacity: 1,
@@ -92,7 +93,7 @@ export default function AboutUs() {
 			// Vision box animation
 			gsap.fromTo(
 				visionRef.current,
-				{ x: 50, opacity: 0 },
+				{ x: 30, opacity: 0 },
 				{
 					x: 0,
 					opacity: 1,
@@ -104,10 +105,10 @@ export default function AboutUs() {
 				},
 			);
 
-			// Images animation
+			// Image animations
 			gsap.fromTo(
 				fig1Ref.current,
-				{ y: 100, opacity: 0 },
+				{ y: 50, opacity: 0 },
 				{
 					y: 0,
 					opacity: 1,
@@ -121,7 +122,7 @@ export default function AboutUs() {
 
 			gsap.fromTo(
 				fig2Ref.current,
-				{ y: -100, opacity: 0 },
+				{ y: -50, opacity: 0 },
 				{
 					y: 0,
 					opacity: 1,
@@ -139,18 +140,21 @@ export default function AboutUs() {
 	return (
 		<section
 			ref={sectionRef}
-			className="bg-[#202037] relative flex items-center overflow-hidden py-10"
+			className="bg-[#202037] relative flex items-center overflow-hidden py-12"
 		>
-			<div className="relative w-full text-white px-4 md:px-8 lg:px-[100px]">
+			<div className="container mx-auto px-4 md:px-8 lg:px-20 text-white">
 				<h1
 					ref={headingRef}
-					className="font-bold text-[15vmin] md:text-[20vmin] mb-6"
+					className="font-bold text-[13vmin] md:text-[13vmin] mb-8 text-center"
 				>
 					About Us
 				</h1>
-				<div className="flex flex-col lg:flex-row w-full justify-between gap-0">
-					<div className="relative flex flex-col flex-1 justify-between p-4 md:p-6 bg-[#2a2a4a] rounded-lg shadow-lg">
-						<p ref={textRef} className="md:text-lg leading-relaxed text-justify">
+				<div className="flex flex-col xl:flex-row gap-8 items-stretch">
+					<div className="flex-1 bg-[#2a2a4a] h-fit p-6 md:p-8 rounded-lg shadow-lg">
+						<p
+							ref={textRef}
+							className="text-base md:text-lg leading-relaxed mb-6 text-justify"
+						>
 							We are a company specializing in providing energy-saving solutions
 							for VESA devices. With a team of experienced experts, we are
 							committed to delivering the highest quality products and services to
@@ -158,27 +162,29 @@ export default function AboutUs() {
 						</p>
 						<div
 							ref={statsRef}
-							className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center"
+							className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
 						>
 							{stats.map((stat, index) => (
 								<div
 									key={index}
-									className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+									className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-shadow"
 								>
-									<div className="text-3xl md:text-4xl font-bold text-indigo-600 mb-2">
+									<div className="text-2xl md:text-3xl font-bold text-indigo-600 mb-1">
 										{stat.value}
 									</div>
-									<div className="text-gray-600 font-medium">{stat.label}</div>
+									<div className="text-sm md:text-base text-gray-600 font-medium">
+										{stat.label}
+									</div>
 								</div>
 							))}
 						</div>
 						<div className="grid md:grid-cols-2 gap-4">
 							<div
 								ref={missionRef}
-								className="bg-gradient-to-br from-indigo-500 to-purple-600 p-8 rounded-lg text-white"
+								className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-lg text-white"
 							>
 								<h2 className="text-xl md:text-2xl font-semibold">Our Mission</h2>
-								<p className="text-base md:text-lg leading-relaxe mt-4">
+								<p className="text-sm md:text-base mt-4 leading-relaxed">
 									To innovate and provide sustainable energy solutions that
 									enhance the efficiency and performance of VESA devices,
 									contributing to a greener future.
@@ -186,28 +192,18 @@ export default function AboutUs() {
 							</div>
 							<div
 								ref={visionRef}
-								className="bg-white border border-gray-200 p-8 rounded-lg shadow-md"
+								className="bg-white border border-gray-200 p-6 rounded-lg shadow-md"
 							>
 								<h2 className="text-xl md:text-2xl font-semibold text-gray-800">
 									Our Vision
 								</h2>
-								<p className="text-base md:text-lg leading-relaxed mt-4 text-gray-800">
+								<p className="text-sm md:text-base mt-4 leading-relaxed text-gray-800">
 									To be the leading provider of innovative energy-saving
 									solutions, recognized globally for our commitment to quality,
 									sustainability, and customer satisfaction.
 								</p>
 							</div>
 						</div>
-					</div>
-					<div className="relative lg:w-[550px] h-[400px] md:h-[680px] mx-auto">
-						<div
-							ref={fig2Ref}
-							className="fig2 w-[250px] md:w-[350px] h-[300px] md:h-[450px] absolute rounded-3xl top-0 right-0 bg-cover bg-no-repeat"
-						></div>
-						<div
-							ref={fig1Ref}
-							className="fig1 w-[250px] md:w-[350px] h-[300px] md:h-[450px] absolute rounded-3xl top-[20%] md:top-[34%] right-16 md:right-32 bg-cover bg-no-repeat"
-						></div>
 					</div>
 				</div>
 			</div>

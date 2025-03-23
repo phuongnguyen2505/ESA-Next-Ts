@@ -113,6 +113,7 @@ export default function Marquee() {
                 <h4 className='text-black'>Energy Saving VESA</h4>
                 <h4 className='text-gray-400'>Energy Saving VESA</h4>
                 <h4 className='text-black'>Energy Saving VESA</h4>
+                <h4 className='text-gray-600'>Energy Saving VESA</h4>
             </div>
         </div>
     )

@@ -79,12 +79,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			const photo = files.photo;
 			let photoName = "";
 
+			// Sử dụng tên gốc của file (originalFilename)
 			if (photo && Array.isArray(photo) && photo[0]) {
 				const file = photo[0];
-				const ext = path.extname(file.newFilename);
-				const timestamp = Date.now();
-				photoName = `fig${timestamp}${ext}`;
-
+				photoName = file.originalFilename || "default.jpg";
+				
 				const newPath = path.join(uploadDir, photoName);
 				fs.renameSync(file.filepath, newPath);
 			}
