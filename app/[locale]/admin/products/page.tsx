@@ -485,10 +485,10 @@ export default function Products() {
 											</div>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											{product.list_ten_en ?? "-"}
+											{truncateText(product.list_ten_en ?? "-")}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											{product.cat_ten_en ?? "-"}
+											{truncateText(product.cat_ten_en ?? "-")}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
 											<button

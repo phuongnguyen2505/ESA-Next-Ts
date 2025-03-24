@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import Image from "next/image";
+import ScrollFloat from "../Ui/ScrollFloat";
 
 export default function AboutUs() {
 	const sectionRef = useRef(null);
@@ -143,12 +144,17 @@ export default function AboutUs() {
 			className="bg-[#202037] relative flex items-center overflow-hidden py-12"
 		>
 			<div className="container mx-auto px-4 md:px-8 lg:px-20 text-white">
-				<h1
-					ref={headingRef}
-					className="font-bold text-[13vmin] md:text-[13vmin] mb-8 text-center"
+				<ScrollFloat
+					animationDuration={1}
+					ease="back.inOut(2)"
+					scrollStart="center bottom+=50%"
+					scrollEnd="bottom bottom-=40%"
+					stagger={0.03}
+					containerClassName="font-bold text-[16vmin] md:text-[13vmin] mb-8 text-center"
 				>
 					About Us
-				</h1>
+				</ScrollFloat>
+				<div className="relative top-[-40px] w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl mx-auto mt-4" />
 				<div className="flex flex-col xl:flex-row gap-8 items-stretch">
 					<div className="flex-1 bg-[#2a2a4a] h-fit p-6 md:p-8 rounded-lg shadow-lg">
 						<p

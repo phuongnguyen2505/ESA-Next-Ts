@@ -96,6 +96,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				noibat: parseInt(fields.noibat?.[0] || "0"),
 				tags_vi: fields.tags_vi?.[0],
 				tags_en: fields.tags_en?.[0],
+				gia: parseFloat(fields.gia?.[0] ?? "0"),
+				luotxem: parseInt(fields.luotxem?.[0] ?? "0"),
 				ngaysua: new Date(),
 				tenkhongdau: fields.tenkhongdau?.[0],
 			};

@@ -2,6 +2,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import BlurText from "../Ui/BlurText";
 
 interface BannerProps {}
 
@@ -69,25 +70,45 @@ export default function Banner({}: BannerProps) {
 		}
 	}, [currentBanner.title, currentBanner.des]);
 
+	const handleAnimationComplete = () => {
+		console.log("Animation completed!");
+	};
+
 	return (
-		<section className="bg-[#202037] relative flex items-center overflow-hidden py-10 sm:py-16 rounded-t-2xl">
+		<section className="bg-[#202037] relative flex items-center overflow-hidden py-10 px-16 max-md:px-12 sm:py-16 rounded-t-2xl">
 			{/* Background Effects */}
 			<div className="absolute inset-0 bg-gradient-to-br from-[#1e1e2f] to-[#0d0d1a]" />
 
 			{/* Content Container */}
 			<div className="container mx-auto px-4 text-left">
-				<h1
+				{/* <h1
 					ref={titleRef}
 					className="font-bold text-white text-4xl sm:text-6xl md:text-7xl lg:text-[18vmin] xl:text-[20vmin]"
 				>
 					{currentBanner.title}
-				</h1>
-				<p
+				</h1> */}
+				<BlurText
+					text={currentBanner.title}
+					delay={200}
+					animateBy="letters"
+					direction="top"
+					onAnimationComplete={handleAnimationComplete}
+					className="mb-8 font-bold text-white text-4xl sm:text-6xl md:text-7xl lg:text-[18vmin] xl:text-[20vmin]"
+				/>
+				<BlurText
+					text={currentBanner.des}
+					delay={200}
+					animateBy="words"
+					direction="top"
+					onAnimationComplete={handleAnimationComplete}
+					className="mt-4 mb-8 text-white text-sm sm:text-base md:text-lg lg:text-[3vmin]"
+				/>
+				{/* <p
 					ref={descRef}
 					className="mt-4 text-white text-sm sm:text-base md:text-lg lg:text-[3vmin]"
 				>
 					{currentBanner.des}
-				</p>
+				</p> */}
 			</div>
 		</section>
 	);

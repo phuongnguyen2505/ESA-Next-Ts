@@ -24,4 +24,5 @@ export interface Product {
 	luotxem: number;
 	tags_en: string;
 	tenkhongdau: string;
+	gia: number;
 }

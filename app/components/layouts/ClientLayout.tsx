@@ -11,10 +11,10 @@ interface MetaData {
 	keywords?: string;
 }
 
-export default function ClientLayout({ 
+export default function ClientLayout({
 	children,
-	metadata
-}: { 
+	metadata,
+}: {
 	children: React.ReactNode;
 	metadata?: MetaData;
 }) {
@@ -30,13 +30,19 @@ export default function ClientLayout({
 				<meta name="keywords" content={keywords || "default, keywords"} />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<meta property="og:title" content={title || "VESA Energy Saving"} />
-				<meta property="og:description" content={description || "Default description"} />
+				<meta
+					property="og:description"
+					content={description || "Default description"}
+				/>
 				<meta property="og:type" content="website" />
 				<meta property="og:image" content="/images/shortcut.png" />
 				<meta property="og:url" content="https://vesaflow.com" />
 				<meta name="twitter:card" content="summary_large_image" />
 				<meta name="twitter:title" content={title || "VESA Energy Saving"} />
-				<meta name="twitter:description" content={description || "Default description"} />
+				<meta
+					name="twitter:description"
+					content={description || "Default description"}
+				/>
 				<meta name="twitter:image" content="/path-to-your-default-image.jpg" />
 				<meta name="robots" content="index, follow" />
 				<meta name="language" content="English" />

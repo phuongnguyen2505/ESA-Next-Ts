@@ -41,7 +41,11 @@ export default function Menu() {
 
 	const isActiveLink = (path: string): boolean => {
 		const localePath = createLocalePath(path);
-		return pathname === localePath;
+		if (!pathname) return false;
+		if (path === "/") {
+			return pathname === localePath;
+		}
+		return pathname === localePath || pathname.startsWith(`${localePath}/`);
 	};
 
 	const renderNavItems = (items: NavItem[]) => (

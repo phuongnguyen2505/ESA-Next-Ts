@@ -28,7 +28,7 @@ type CreateProductForm = Omit<
 	| "file"
 	| "ngaytao"
 	| "ngaysua"
-	| "luotxem"
+	// Không loại trừ "luotxem" và "gia" để dùng cho price và view count
 >;
 
 export default function CreateProduct() {
@@ -51,6 +51,9 @@ export default function CreateProduct() {
 		tags_en: "",
 		title_vi: "",
 		tenkhongdau: "",
+		// Thêm price và view count
+		gia: "",
+		luotxem: 0,
 	});
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [modal, setModal] = useState<{
@@ -232,14 +235,14 @@ export default function CreateProduct() {
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 	) => {
 		const { name, value } = e.target;
-		setFormData((prev: typeof formData) => ({
+		setFormData((prev) => ({
 			...prev,
 			[name]: value,
 		}));
 	};
 
 	const handleEditorChange = (data: string, name: string) => {
-		setFormData((prev: typeof formData) => ({
+		setFormData((prev) => ({
 			...prev,
 			[name]: data,
 		}));
@@ -247,7 +250,7 @@ export default function CreateProduct() {
 
 	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
-		setFormData((prev: typeof formData) => ({
+		setFormData((prev) => ({
 			...prev,
 			hienthi: checked ? 1 : 0,
 		}));
@@ -255,7 +258,7 @@ export default function CreateProduct() {
 
 	const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const { name, value } = e.target;
-		setFormData((prev: typeof formData) => ({
+		setFormData((prev) => ({
 			...prev,
 			[name]: parseInt(value),
 		}));
@@ -277,7 +280,7 @@ export default function CreateProduct() {
 		setFormData((prev) => ({
 			...prev,
 			ten_en: newName,
-			tenkhongdau: newName.toLowerCase().replace(/\s+/g, '-'), // Tạo tenkhongdau tự động
+			tenkhongdau: newName.toLowerCase().replace(/\s+/g, "-"), // Tạo tenkhongdau tự động
 		}));
 	};
 
@@ -287,7 +290,7 @@ export default function CreateProduct() {
 				isOpen={modal.isOpen}
 				message={modal.message}
 				type={modal.type}
-				onClose={() => setModal((prev: typeof modal) => ({ ...prev, isOpen: false }))}
+				onClose={() => setModal((prev) => ({ ...prev, isOpen: false }))}
 			/>
 			<form
 				onSubmit={handleSubmit}
@@ -325,7 +328,7 @@ export default function CreateProduct() {
 						))}
 					</Select>
 
-					<div className="flex items-center space-x-4">
+					<div className="flex flex-wrap items-center gap-4">
 						<InputSm
 							title={t("productCode")}
 							value={formData.masp}
@@ -345,6 +348,20 @@ export default function CreateProduct() {
 							/>
 							<label>{t("autoGenerate")}</label>
 						</div>
+					</div>
+
+					{/* Thêm phần Price và Views */}
+					<div className="space-y-6">
+						<InputSm
+							title={t("price") + " (USD)"}
+							name="gia"
+							type="number"
+							step="0.01"
+							min="0"
+							value={formData.gia.toString()}
+							onChange={handleChange}
+							required
+						/>
 					</div>
 				</div>
 
@@ -412,7 +429,7 @@ export default function CreateProduct() {
 					</div>
 				</div>
 
-				<UploadFile title={t('uploadFile')} onFileUpload={handleFileUpload} />
+				<UploadFile title={t("uploadFile")} onFileUpload={handleFileUpload} />
 
 				<InputImage
 					title={t("picture")}

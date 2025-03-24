@@ -6,6 +6,7 @@ import axios from "axios";
 import { Product } from "@/types/Product";
 import Viewmore from "../Ui/Viewmore";
 import { motion } from "framer-motion";
+import ScrollFloat from "../Ui/ScrollFloat";
 
 export default function Featured() {
 	const [products, setProducts] = useState<Product[]>([]);
@@ -46,9 +47,19 @@ export default function Featured() {
 					viewport={{ once: true }}
 					className="text-center mb-16"
 				>
-					<h2 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent text-white">
+					{/* <h2 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent text-white">
 						Featured Products
-					</h2>
+					</h2> */}
+					<ScrollFloat
+						animationDuration={1}
+						ease="back.inOut(2)"
+						scrollStart="center bottom+=50%"
+						scrollEnd="bottom bottom-=40%"
+						stagger={0.03}
+						containerClassName="text-4xl md:text-6xl font-bold bg-clip-text text-transparent text-white"
+					>
+						Featured Products
+					</ScrollFloat>
 					<div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl mx-auto mt-4" />
 				</motion.div>
 

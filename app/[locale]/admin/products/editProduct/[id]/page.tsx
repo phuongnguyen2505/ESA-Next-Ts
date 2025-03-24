@@ -33,6 +33,8 @@ type EditProductForm = Omit<
 > & {
 	file: File | string | null;
 	tenkhongdau: string;
+	gia: number;
+	luotxem: number;
 };
 
 interface ProductResponse {
@@ -62,6 +64,8 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		tags_en: "",
 		tenkhongdau: "",
 		title_vi: "",
+		gia: 0,
+		luotxem: 0,
 	});
 
 	const [imageFile, setImageFile] = useState<File | null>(null);
@@ -74,7 +78,6 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		message: "",
 		type: "success",
 	});
-
 	const [imagePreview, setImagePreview] = useState<string | null>(null);
 	const [productLists, setProductLists] = useState<ProductList[]>([]);
 	const [productCats, setProductCats] = useState<ProductCat[]>([]);
@@ -84,10 +87,9 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		const fetchData = async () => {
 			try {
 				const [listsRes, catsRes] = await Promise.all([
-					axiosInstance.get<{ lists: Array<ProductList> }>("/api/productList"),
-					axiosInstance.get<{ categories: Array<ProductCat> }>("/api/productCat"),
+					axiosInstance.get<{ lists: ProductList[] }>("/api/productList"),
+					axiosInstance.get<{ categories: ProductCat[] }>("/api/productCat"),
 				]);
-
 				setProductLists(listsRes.data.lists || []);
 				setProductCats(catsRes.data.categories || []);
 			} catch (error) {
@@ -127,6 +129,9 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 					noibat: product.noibat,
 					tags_en: product.tags_en,
 					tenkhongdau: product.tenkhongdau,
+					title_vi: product.title_vi,
+					gia: product.gia ?? 0,
+					luotxem: product.luotxem ?? 0,
 				}));
 
 				if (product.photo) {
@@ -166,20 +171,14 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		const file = e.target.files?.[0];
 		if (file) {
 			setImageFile(file);
-			if (typeof window !== "undefined") {
-				const previewUrl = URL.createObjectURL(file);
-				setImagePreview(previewUrl);
-
-				return () => {
-					URL.revokeObjectURL(previewUrl);
-				};
-			}
+			const previewUrl = URL.createObjectURL(file);
+			setImagePreview(previewUrl);
 		}
 	};
 
 	useEffect(() => {
 		return () => {
-			if (imagePreview && typeof window !== "undefined") {
+			if (imagePreview) {
 				URL.revokeObjectURL(imagePreview);
 			}
 		};
@@ -224,15 +223,14 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 	) => {
 		const { name, value } = e.target;
-		setFormData((prev: typeof formData) => ({
+		setFormData((prev) => ({
 			...prev,
 			[name]: value,
-			tenkhongdau: value.toLowerCase().replace(/\s+/g, '-'), // Cập nhật tenkhongdau tự động
 		}));
 	};
 
 	const handleEditorChange = (data: string, name: string) => {
-		setFormData((prev: typeof formData) => ({
+		setFormData((prev) => ({
 			...prev,
 			[name]: data,
 		}));
@@ -240,7 +238,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 
 	const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { checked } = e.target;
-		setFormData((prev: typeof formData) => ({
+		setFormData((prev) => ({
 			...prev,
 			hienthi: checked ? 1 : 0,
 		}));
@@ -248,15 +246,15 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 
 	const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const { name, value } = e.target;
-		setFormData((prev: typeof formData) => ({
+		setFormData((prev) => ({
 			...prev,
 			[name]: parseInt(value),
 		}));
 	};
 
 	const handleFileUpload = (file: File | null) => {
-		setFormData((prevData) => ({
-			...prevData,
+		setFormData((prev) => ({
+			...prev,
 			file: file,
 		}));
 	};
@@ -265,13 +263,22 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		router.push("/admin/products");
 	};
 
+	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newName = e.target.value;
+		setFormData((prev) => ({
+			...prev,
+			ten_en: newName,
+			tenkhongdau: newName.toLowerCase().replace(/\s+/g, "-"),
+		}));
+	};
+
 	return (
 		<AdminLayout pageName={t("editProduct")}>
 			<Modal
 				isOpen={modal.isOpen}
 				message={modal.message}
 				type={modal.type}
-				onClose={() => setModal((prev: typeof modal) => ({ ...prev, isOpen: false }))}
+				onClose={() => setModal((prev) => ({ ...prev, isOpen: false }))}
 			/>
 			<form
 				onSubmit={handleSubmit}
@@ -316,16 +323,18 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 						name="masp"
 						required
 						placeholder={t("productCode")}
+						disabled={true} // Nếu tự động gen thì không cho chỉnh sửa
 					/>
 				</div>
 
 				<div className="space-y-6">
 					<InputSm
-						title={t('name')}
+						title={t("name")}
 						value={formData.ten_en}
-						onChange={handleChange}
-						placeholder={t('name')}
+						onChange={handleNameChange}
+						placeholder={t("name")}
 						name="ten_en"
+						required
 					/>
 					<InputTextarea
 						title={t("description")}
@@ -369,6 +378,20 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 					/>
 				</div>
 
+				{/* Thêm trường Price & Views */}
+				<div className="space-y-6">
+					<InputSm
+						title={t("price") + " (USD)"}
+						name="gia"
+						type="number"
+						step="0.01"
+						min="0"
+						value={formData.gia.toString()}
+						onChange={handleChange}
+						required
+					/>
+				</div>
+
 				<UploadFile
 					title={t("uploadFile")}
 					fileNames={formData.file ? [formData.file.toString()] : undefined}
@@ -383,14 +406,18 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 					currentImage={formData.photo}
 					t={t}
 				/>
+
 				<InputSm
 					title={t("url")}
 					value={formData.tenkhongdau}
-					onChange={handleChange}
+					onChange={(e) =>
+						setFormData((prev) => ({ ...prev, tenkhongdau: e.target.value }))
+					}
 					name="tenkhongdau"
 					placeholder={t("url")}
 					disabled
 				/>
+
 				<InputCheckbox
 					name="hienthi"
 					checked={formData.hienthi === 1}

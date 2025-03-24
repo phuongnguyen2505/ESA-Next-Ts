@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import db from "@/lib/db";
-import { RowDataPacket } from 'mysql2';
+import { RowDataPacket } from "mysql2";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const { id } = req.query;
@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						(err, results: RowDataPacket[]) => {
 							if (err) reject(err);
 							else resolve(results);
-						}
+						},
 					);
 				});
 
@@ -34,20 +34,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					return res.status(404).json({ error: "Product not found" });
 				}
 
-				if (product.photo && !product.photo.startsWith('http')) {
+				if (product.photo && !product.photo.startsWith("http")) {
 					product.photo = `/uploads/products/${product.photo}`;
 				}
 
-				return res.status(200).json({ 
+				return res.status(200).json({
 					success: true,
-					product: product 
+					product: product,
 				});
-
 			} catch (error) {
-				console.error('Error fetching product:', error);
+				console.error("Error fetching product:", error);
 				return res.status(500).json({
 					error: "Internal Server Error",
-					details: error instanceof Error ? error.message : "Unknown error"
+					details: error instanceof Error ? error.message : "Unknown error",
 				});
 			}
 			break;
@@ -55,22 +54,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		case "PATCH":
 			try {
 				const updateData = req.body;
-
 				if (!updateData) {
 					return res.status(400).json({ error: "Update data is required" });
 				}
 
-				const allowedFields = ['hienthi', 'noibat'];
+				// Cho phép cập nhật cả gia và luotxem
+				const allowedFields = ["hienthi", "noibat", "gia", "luotxem"];
 				const filteredData = Object.keys(updateData)
-					.filter(key => allowedFields.includes(key))
-					.reduce((obj, key) => ({
-						...obj,
-						[key]: Number(updateData[key])
-					}), {});
+					.filter((key) => allowedFields.includes(key))
+					.reduce(
+						(obj, key) => ({
+							...obj,
+							[key]:
+								key === "gia"
+									? parseFloat(updateData[key])
+									: Number(updateData[key]),
+						}),
+						{},
+					);
 
 				const dataToUpdate = {
 					...filteredData,
-					ngaysua: new Date()
+					ngaysua: new Date(),
 				};
 
 				const result = await new Promise((resolve, reject) => {
@@ -79,28 +84,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						[dataToUpdate, id],
 						(err, result) => {
 							if (err) {
-								console.error('Database error:', err);
+								console.error("Database error:", err);
 								reject(err);
-							}
-							resolve(result);
-						}
+							} else resolve(result);
+						},
 					);
 				});
 
 				return res.status(200).json({
 					success: true,
 					message: "Updated successfully",
-					data: result
+					data: result,
 				});
-
 			} catch (error) {
-				console.error('Error in PATCH handler:', error);
+				console.error("Error in PATCH handler:", error);
 				return res.status(500).json({
 					error: "Internal Server Error",
-					details: error instanceof Error ? error.message : "Unknown error"
+					details: error instanceof Error ? error.message : "Unknown error",
 				});
 			}
-			break;
 
 		default:
 			return res.status(405).json({ error: `Method ${req.method} Not Allowed` });

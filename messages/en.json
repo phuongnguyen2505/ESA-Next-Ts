@@ -80,6 +80,10 @@
 
 		"tags": "Tags",
 
+		"price": "Price",
+		"views": "View",
+
+
 		"messages": {
 			"deleteSuccess": "Successfully deleted",
 			"deleteFailed": "Delete failed",
