@@ -20,8 +20,9 @@ export const LanguageFields = ({
 	return (
 		<>
 			<InputSm
+				type="text"
 				title={t("name")}
-				value={String(formData[`ten_${prefix}` as keyof ProductListFormData] ?? '')}
+				value={String(formData[`ten_${prefix}` as keyof ProductListFormData] ?? "")}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 					setFormData({ ...formData, [`ten_${prefix}`]: e.target.value })
 				}
@@ -30,7 +31,7 @@ export const LanguageFields = ({
 			/>
 			<InputTextarea
 				title={t("description")}
-				value={String(formData[`mota_${prefix}` as keyof ProductListFormData] ?? '')}
+				value={String(formData[`mota_${prefix}` as keyof ProductListFormData] ?? "")}
 				onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
 					setFormData({ ...formData, [`mota_${prefix}`]: e.target.value })
 				}

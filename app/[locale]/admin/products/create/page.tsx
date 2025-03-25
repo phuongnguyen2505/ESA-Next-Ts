@@ -51,8 +51,7 @@ export default function CreateProduct() {
 		tags_en: "",
 		title_vi: "",
 		tenkhongdau: "",
-		// Thêm price và view count
-		gia: "",
+		gia: 0,
 		luotxem: 0,
 	});
 	const [imageFile, setImageFile] = useState<File | null>(null);
@@ -330,6 +329,7 @@ export default function CreateProduct() {
 
 					<div className="flex flex-wrap items-center gap-4">
 						<InputSm
+							type="text"
 							title={t("productCode")}
 							value={formData.masp}
 							onChange={handleChange}
@@ -353,11 +353,10 @@ export default function CreateProduct() {
 					{/* Thêm phần Price và Views */}
 					<div className="space-y-6">
 						<InputSm
+							type="text"
+							placeholder="Price"
 							title={t("price") + " (USD)"}
 							name="gia"
-							type="number"
-							step="0.01"
-							min="0"
 							value={formData.gia.toString()}
 							onChange={handleChange}
 							required
@@ -368,6 +367,7 @@ export default function CreateProduct() {
 				<div className="block">
 					<div className="space-y-6">
 						<InputSm
+							type="text"
 							title={t("name")}
 							value={formData.ten_en}
 							onChange={handleNameChange}
@@ -388,6 +388,7 @@ export default function CreateProduct() {
 							onChange={(data) => handleEditorChange(data, "noidung_en")}
 						/>
 						<InputSm
+							type="text"
 							title={t("title") + " SEO"}
 							value={formData.title_en}
 							onChange={handleChange}
@@ -395,6 +396,7 @@ export default function CreateProduct() {
 							name="title_en"
 						/>
 						<InputSm
+							type="text"
 							title={t("keywords") + " SEO"}
 							value={formData.keywords_en}
 							onChange={handleChange}
@@ -409,6 +411,7 @@ export default function CreateProduct() {
 							placeholder={t("description") + " SEO"}
 						/>
 						<InputSm
+							type="text"
 							title={t("tags")}
 							value={formData.tags_en}
 							onChange={handleChange}
@@ -416,6 +419,7 @@ export default function CreateProduct() {
 							name="tags_en"
 						/>
 						<InputSm
+							type="text"
 							title={t("url")}
 							value={formData.tenkhongdau}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

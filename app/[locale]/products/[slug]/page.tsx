@@ -31,7 +31,7 @@ export default function ProductDetailPage() {
 			);
 		};
 		load();
-	}, [slug]);
+	}, [slug, router]);
 
 	useEffect(() => {
 		if (product && containerRef.current) {

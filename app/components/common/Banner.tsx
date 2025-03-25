@@ -75,7 +75,7 @@ export default function Banner({}: BannerProps) {
 	};
 
 	return (
-		<section className="bg-[#202037] relative flex items-center overflow-hidden py-10 px-16 max-md:px-12 sm:py-16 rounded-t-2xl">
+		<section className="bg-[#202037] relative flex items-center overflow-hidden py-10 sm:py-16 rounded-t-2xl">
 			{/* Background Effects */}
 			<div className="absolute inset-0 bg-gradient-to-br from-[#1e1e2f] to-[#0d0d1a]" />
 

@@ -121,6 +121,7 @@ export default function ListForm() {
 			<div className="w-full max-w-2xl mx-auto px-4 py-6">
 				<form onSubmit={handleSubmit} className="space-y-6">
 					<InputSm
+						type="text"
 						title={t("name")}
 						value={formData.ten_en}
 						onChange={handleNameChange} // Sử dụng hàm handleNameChange
@@ -144,6 +145,7 @@ export default function ListForm() {
 					</div>
 
 					<InputSm
+						type="text"
 						title={t("title")}
 						value={formData.title_en}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -154,6 +156,7 @@ export default function ListForm() {
 					/>
 
 					<InputSm
+						type="text"
 						title={t("keywords")}
 						value={formData.keywords_en}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -167,6 +170,7 @@ export default function ListForm() {
 					/>
 
 					<InputSm
+						type="text"
 						title={t("url")}
 						value={formData.tenkhongdau}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

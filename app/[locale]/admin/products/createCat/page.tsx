@@ -78,7 +78,7 @@ export default function CreateProductCat() {
 		setFormData((prev) => ({
 			...prev,
 			ten_en: newName,
-			tenkhongdau: newName.toLowerCase().replace(/\s+/g, '-'), // Tạo tenkhongdau tự động
+			tenkhongdau: newName.toLowerCase().replace(/\s+/g, "-"), // Tạo tenkhongdau tự động
 		}));
 	};
 
@@ -131,6 +131,7 @@ export default function CreateProductCat() {
 						</select>
 					</div>
 					<InputSm
+						type="text"
 						title={t("name")}
 						value={formData.ten_en}
 						onChange={handleNameChange}
@@ -152,6 +153,7 @@ export default function CreateProductCat() {
 					</div>
 
 					<InputSm
+						type="text"
 						title={t("title")}
 						value={formData.title_en}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -162,6 +164,7 @@ export default function CreateProductCat() {
 					/>
 
 					<InputSm
+						type="text"
 						title={t("keywords")}
 						value={formData.keywords_en}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -172,6 +175,7 @@ export default function CreateProductCat() {
 					/>
 
 					<InputSm
+						type="text"
 						title={t("url")}
 						value={formData.tenkhongdau}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

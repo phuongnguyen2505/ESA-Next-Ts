@@ -141,6 +141,7 @@ export default function AboutUs() {
 					<div className="space-y-6">
 						<div>
 							<InputSm
+								type="text"
 								title={t("name")}
 								value={abouts.ten_en}
 								onChange={handleChange}
@@ -169,13 +170,14 @@ export default function AboutUs() {
 										noidung_en: data,
 									}))
 								}
-								title={t('content')}
+								title={t("content")}
 							/>
 						</div>
 
 						<div className="space-y-4">
 							<div>
 								<InputSm
+									type="text"
 									title={t("title") + " SEO"}
 									value={abouts.title_en}
 									onChange={handleChange}
@@ -185,6 +187,7 @@ export default function AboutUs() {
 							</div>
 							<div>
 								<InputSm
+									type="text"
 									title={t("keywords") + " SEO"}
 									value={abouts.keywords_en}
 									onChange={handleChange}

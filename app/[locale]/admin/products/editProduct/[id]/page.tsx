@@ -317,6 +317,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 					</Select>
 
 					<InputSm
+						type="text"
 						title={t("productCode")}
 						value={formData.masp}
 						onChange={handleChange}
@@ -329,6 +330,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 
 				<div className="space-y-6">
 					<InputSm
+						type="text"
 						title={t("name")}
 						value={formData.ten_en}
 						onChange={handleNameChange}
@@ -349,6 +351,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 						onChange={(data) => handleEditorChange(data, "noidung_en")}
 					/>
 					<InputSm
+						type="text"
 						title={t("title") + " SEO"}
 						value={formData.title_en}
 						onChange={handleChange}
@@ -356,6 +359,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 						name="title_en"
 					/>
 					<InputSm
+						type="text"
 						title={t("keywords") + " SEO"}
 						value={formData.keywords_en}
 						onChange={handleChange}
@@ -370,6 +374,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 						placeholder={t("description") + " SEO"}
 					/>
 					<InputSm
+						type="text"
 						title={t("tags")}
 						value={formData.tags_en}
 						onChange={handleChange}
@@ -381,11 +386,10 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 				{/* Thêm trường Price & Views */}
 				<div className="space-y-6">
 					<InputSm
+						placeholder="Price"
 						title={t("price") + " (USD)"}
 						name="gia"
 						type="number"
-						step="0.01"
-						min="0"
 						value={formData.gia.toString()}
 						onChange={handleChange}
 						required
@@ -408,9 +412,10 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 				/>
 
 				<InputSm
+					type="text"
 					title={t("url")}
 					value={formData.tenkhongdau}
-					onChange={(e) =>
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 						setFormData((prev) => ({ ...prev, tenkhongdau: e.target.value }))
 					}
 					name="tenkhongdau"
