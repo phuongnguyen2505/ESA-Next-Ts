@@ -51,6 +51,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		id_cat: 0,
 		ten_en: "",
 		masp: "",
+		sptb: "",
 		mota_en: "",
 		noidung_en: "",
 		title_en: "",
