@@ -28,7 +28,6 @@ type CreateProductForm = Omit<
 	| "file"
 	| "ngaytao"
 	| "ngaysua"
-	// Không loại trừ "luotxem" và "gia" để dùng cho price và view count
 >;
 
 export default function CreateProduct() {
@@ -39,6 +38,7 @@ export default function CreateProduct() {
 		id_cat: 0,
 		ten_en: "",
 		masp: "",
+		sptb: "",
 		mota_en: "",
 		noidung_en: "",
 		title_en: "",

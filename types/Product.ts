@@ -11,6 +11,7 @@ export interface Product {
 	file: string;
 	ten_en: string;
 	masp: string;
+	sptb: string;
 	mota_en: string;
 	noidung_en: string;
 	title_vi: string;

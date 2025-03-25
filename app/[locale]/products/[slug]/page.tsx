@@ -26,7 +26,7 @@ export default function ProductDetailPage() {
 			// Related: same category (excluding itself)
 			setRelated(
 				products.filter(
-					(p: Product) => p.cat_ten_en === found.cat_ten_en && p.id !== found.id,
+					(p: Product) => p.list_ten_en === found.list_ten_en && p.id !== found.id,
 				),
 			);
 		};
@@ -77,7 +77,7 @@ export default function ProductDetailPage() {
 
 	return (
 		<ClientLayout>
-			<section className="w-full py-12 px-4">
+			<section className="w-full">
 				<div className="max-w-7xl mx-auto flex flex-col gap-10" ref={containerRef}>
 					{/* Breadcrumb */}
 					<nav className="text-md mb-4">
@@ -150,12 +150,16 @@ export default function ProductDetailPage() {
 								<table className="w-full text-left text-sm">
 									<tbody>
 										<tr>
-											<th className="py-2">Model Number</th>
-											<td>{product.masp}</td>
+											<th className="py-2">Model</th>
+											<td>{product.ten_en}</td>
 										</tr>
 										<tr>
 											<th className="py-2">Category List</th>
 											<td>{product.list_ten_en}</td>
+										</tr>
+										<tr>
+											<th className="py-2">Product Line</th>
+											<td>{product.cat_ten_en}</td>
 										</tr>
 									</tbody>
 								</table>

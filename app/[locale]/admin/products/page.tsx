@@ -51,16 +51,17 @@ const PRODUCT_MENU_ITEMS: ProductMenuItem[] = [
 	{ translationKey: "picture" },
 	{ translationKey: "productCode" },
 	{ translationKey: "name" },
-	{ translationKey: "list" },
 	{ translationKey: "category" },
+	{ translationKey: "productLine" },
 	{ translationKey: "featured", sortable: true },
+	{ translationKey: "topProduct", sortable: true },
 	{ translationKey: "status" },
 	{ translationKey: "actions" },
 ];
 
 const PRODUCT_CATEGORY_MENU_ITEMS: ProductMenuItem[] = [
 	{ translationKey: "name" },
-	{ translationKey: "productGroup" },
+	{ translationKey: "category" },
 	{ translationKey: "featured", sortable: true },
 	{ translationKey: "status" },
 	{ translationKey: "actions" },
@@ -108,7 +109,7 @@ export default function Products() {
 		id: number,
 		currentStatus: number,
 		type: "products" | "lists" | "categories" = "products",
-		field: "hienthi" | "noibat" = "hienthi",
+		field: "sptb" | "hienthi" | "noibat" = "hienthi",
 	) => {
 		const itemKey = `${type}-${id}-${field}`;
 
@@ -331,6 +332,11 @@ export default function Products() {
 					? a.noibat - b.noibat
 					: b.noibat - a.noibat;
 			}
+			if (sortConfig.key === "sptb") {
+				return sortConfig.direction === "asc"
+					? a.sptb - b.sptb
+					: b.sptb - a.sptb;
+			}
 			return 0;
 		});
 	};
@@ -396,7 +402,7 @@ export default function Products() {
 									: "border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 hover:border-gray-300"
 							} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm uppercase`}
 						>
-							{t("productGroup")}
+							{t("category")}
 						</button>
 						<button
 							onClick={() => setActiveTab("categories")}
@@ -406,7 +412,7 @@ export default function Products() {
 									: "border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 hover:border-gray-300"
 							} whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm uppercase`}
 						>
-							{t("category")}
+							{t("productLine")}
 						</button>
 					</nav>
 				</div>
@@ -436,6 +442,8 @@ export default function Products() {
 													handleSort("id_list");
 												if (item.translationKey === "featured")
 													handleSort("noibat");
+												if (item.translationKey === "topProduct")
+													handleSort("sptb");
 											}}
 										>
 											<div className="flex items-center justify-center">
@@ -453,6 +461,8 @@ export default function Products() {
 															? "id_list"
 															: item.translationKey === "featured"
 															? "noibat"
+															: item.translationKey === "topProduct"
+															? "sptb"
 															: "",
 													)}
 											</div>
@@ -509,6 +519,26 @@ export default function Products() {
 												{product.noibat ? t("featured") : t("normal")}
 											</button>
 										</td>
+										<td className="px-6 py-4 whitespace-nowrap">
+											<button
+												onClick={() =>
+													handleToggleStatus(
+														product.id,
+														product.sptb,
+														"products",
+														"sptb",
+													)
+												}
+												className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+													product.sptb
+														? "bg-blue-100 text-blue-800"
+														: "bg-gray-100 text-gray-800"
+												}`}
+											>
+												{product.sptb ? t("topProduct") : t("normal")}
+											</button>
+										</td>
+
 										<td className="px-6 py-4 whitespace-nowrap">
 											<div className="flex items-center justify-center">
 												<button

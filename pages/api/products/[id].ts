@@ -59,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				}
 
 				// Cho phép cập nhật cả gia và luotxem
-				const allowedFields = ["hienthi", "noibat", "gia", "luotxem"];
+				const allowedFields = ["hienthi", "noibat", "gia", "luotxem", "sptb"];
 				const filteredData = Object.keys(updateData)
 					.filter((key) => allowedFields.includes(key))
 					.reduce(

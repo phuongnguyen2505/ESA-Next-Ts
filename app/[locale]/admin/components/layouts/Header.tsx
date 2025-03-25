@@ -25,7 +25,7 @@ const Header = () => {
 	}, []);
 
 	return (
-		<header className="flex justify-between items-center bg-gray-800 text-white p-4">
+		<header className="flex justify-between sticky top-0 items-center bg-gray-800 text-white p-4">
 			<div className="flex items-center space-x-4">
 				<span className="text-lg">Admin Dashboard</span>
 			</div>

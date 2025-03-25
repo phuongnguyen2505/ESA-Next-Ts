@@ -47,6 +47,7 @@
 		"enter": "Enter",
 		"list": "List",
 		"category": "Category",
+		"productLine": "Product Line",
 		"addProduct": "Add Product",
 		"addCategory": "Add Category",
 		"addList": "Add List",
@@ -69,6 +70,7 @@
 		"inactive": "Inactive",
 		"normal": "Normal",
 		"featured": "Featured",
+		"topProduct": "Top Product",
 
 		"editProductList": "Edit Product List",
 		"editProductCat": "Edit Product Category",

@@ -16,8 +16,9 @@ export default function Featured() {
 			try {
 				const response = await axios.get<{ products: Product[] }>("/api/products");
 				const productsData = response.data.products
-					.filter((product: any) => product.noibat === 1)
-					.slice(-4)
+					.filter((product: any) => product.sptb === 1)
+					.sort((a, b) => a.id - b.id) // Sắp xếp giảm dần theo id
+					.slice(0, 4) // Lấy 4 sản phẩm đầu tiên
 					.map((product: any) => ({
 						...product,
 						link: `/product/${product.id}`,

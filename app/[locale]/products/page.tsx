@@ -20,6 +20,8 @@ export default function Products() {
 	const [featuredOnly, setFeaturedOnly] = useState<boolean>(false);
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 	const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
+	const [selectedProductLines, setSelectedProductLines] = useState<string[]>([]);
+	const [showAllProductLines, setShowAllProductLines] = useState<boolean>(false);
 
 	const productsRef = useRef<HTMLDivElement>(null);
 
@@ -39,21 +41,47 @@ export default function Products() {
 		fetchProducts();
 	}, []);
 
-	// Tính toán danh sách các category độc nhất dựa trên dữ liệu sản phẩm
-	const categories = useMemo((): string[] => {
+	const dynamicCategories = useMemo((): string[] => {
+		// Nếu có lựa chọn product line, chỉ lấy các product thuộc những product line đó
+		const filtered =
+			selectedProductLines.length > 0
+				? products.filter(
+						(p) => p.cat_ten_en && selectedProductLines.includes(p.cat_ten_en),
+				  )
+				: products;
 		return Array.from(
 			new Set(
-				products
+				filtered
 					.map((p) => p.list_ten_en)
 					.filter((cat): cat is string => Boolean(cat)),
 			),
 		);
-	}, [products]);
+	}, [products, selectedProductLines]);
 
-	// Xác định danh sách category hiển thị (giới hạn 5 nếu chưa bật show more)
+	const dynamicProductLines = useMemo((): string[] => {
+		// Nếu có lựa chọn category, chỉ lấy các product thuộc những category đó
+		const filtered =
+			selectedCategories.length > 0
+				? products.filter(
+						(p) => p.list_ten_en && selectedCategories.includes(p.list_ten_en),
+				  )
+				: products;
+		return Array.from(
+			new Set(
+				filtered
+					.map((p) => p.cat_ten_en)
+					.filter((line): line is string => Boolean(line)),
+			),
+		);
+	}, [products, selectedCategories]);
+
 	const visibleCategories = useMemo(() => {
-		return showAllCategories ? categories : categories.slice(0, 5);
-	}, [categories, showAllCategories]);
+		return showAllCategories ? dynamicCategories : dynamicCategories.slice(0, 5);
+	}, [dynamicCategories, showAllCategories]);
+
+	const visibleProductLines = useMemo(() => {
+		return showAllProductLines ? dynamicProductLines : dynamicProductLines.slice(0, 5);
+	}, [dynamicProductLines, showAllProductLines]);
 
 	// Hàm xử lý chọn/gỡ bỏ category
 	const toggleCategory = (category: string) => {
@@ -61,6 +89,15 @@ export default function Products() {
 			setSelectedCategories(selectedCategories.filter((c) => c !== category));
 		} else {
 			setSelectedCategories([...selectedCategories, category]);
+		}
+	};
+
+	// Hàm toggle chọn/bỏ chọn product line
+	const toggleProductLine = (line: string) => {
+		if (selectedProductLines.includes(line)) {
+			setSelectedProductLines(selectedProductLines.filter((l) => l !== line));
+		} else {
+			setSelectedProductLines([...selectedProductLines, line]);
 		}
 	};
 
@@ -72,6 +109,13 @@ export default function Products() {
 		if (selectedCategories.length > 0) {
 			updated = updated.filter(
 				(p) => p.list_ten_en && selectedCategories.includes(p.list_ten_en),
+			);
+		}
+
+		// Lọc theo product line
+		if (selectedProductLines.length > 0) {
+			updated = updated.filter(
+				(p) => p.cat_ten_en && selectedProductLines.includes(p.cat_ten_en),
 			);
 		}
 
@@ -104,7 +148,7 @@ export default function Products() {
 				},
 			);
 		}
-	}, [selectedCategories, featuredOnly, sortOrder, products]);
+	}, [selectedCategories, selectedProductLines, featuredOnly, sortOrder, products]);
 
 	// GSAP animation cho khối sản phẩm khi load xong dữ liệu
 	useEffect(() => {
@@ -144,9 +188,24 @@ export default function Products() {
 		);
 	}
 
+	const truncateText = (text: string, maxLength: number = 20) => {
+		if (text.length <= maxLength) return text;
+		return text.slice(0, maxLength) + "...";
+	};
+
+	const truncateTitle = (text: string, maxLength: number = 35): string => {
+		if (text.length <= maxLength) return text;
+		let sub = text.slice(0, maxLength);
+		const lastSpace = sub.lastIndexOf(" ");
+		if (lastSpace !== -1) {
+			sub = sub.slice(0, lastSpace);
+		}
+		return sub + "...";
+	};
+
 	return (
 		<ClientLayout>
-			<section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+			<section className="w-full py-12 px-4 sm:px-6 lg:px-12 bg-gray-50">
 				<div className="max-w-7xl mx-auto">
 					<h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
 						Our Products
@@ -162,15 +221,14 @@ export default function Products() {
 
 							{/* Lọc theo sản phẩm nổi bật */}
 							<div className="mb-6">
-								<label className="flex items-center text-gray-700 font-medium">
-									<input
-										type="checkbox"
-										checked={featuredOnly}
-										onChange={(e) => setFeaturedOnly(e.target.checked)}
-										className="h-5 w-5 mr-2"
-									/>
+								<button
+									onClick={() => setFeaturedOnly(!featuredOnly)}
+									className={`px-3 py-1 rounded-full border ${
+										featuredOnly ? "bg-blue-600 text-white" : "text-gray-700"
+									}`}
+								>
 									Featured Only
-								</label>
+								</button>
 							</div>
 
 							{/* Lọc theo Category (Multi-select) */}
@@ -199,16 +257,59 @@ export default function Products() {
 													: "text-gray-700"
 											}`}
 										>
-											{cat}
+											{truncateText(cat)}
 										</button>
 									))}
 								</div>
-								{categories.length > 5 && (
+								{dynamicCategories.length > 5 && (
 									<button
 										onClick={() => setShowAllCategories(!showAllCategories)}
 										className="mt-2 text-sm text-blue-600 hover:underline"
 									>
 										{showAllCategories ? "Show Less" : "Show More"}
+									</button>
+								)}
+							</div>
+							<div className="mb-6">
+								<label className="block text-gray-700 font-medium mb-2">
+									Product Lines:
+								</label>
+								<div className="flex flex-wrap gap-2">
+									{/* Nút “All” cho product line */}
+									<button
+										onClick={() => setSelectedProductLines([])}
+										className={`px-3 py-1 rounded-full border ${
+											selectedProductLines.length === 0
+												? "bg-blue-600 text-white"
+												: "text-gray-700"
+										}`}
+									>
+										All
+									</button>
+
+									{/* Danh sách product line hiển thị */}
+									{visibleProductLines.map((line, index) => (
+										<button
+											key={index}
+											onClick={() => toggleProductLine(line)}
+											className={`px-3 py-1 rounded-full border ${
+												selectedProductLines.includes(line)
+													? "bg-blue-600 text-white"
+													: "text-gray-700"
+											}`}
+										>
+											{truncateText(line)}
+										</button>
+									))}
+								</div>
+
+								{/* Nút Show More / Show Less nếu có nhiều hơn 5 product line */}
+								{dynamicProductLines.length > 5 && (
+									<button
+										onClick={() => setShowAllProductLines(!showAllProductLines)}
+										className="mt-2 text-sm text-blue-600 hover:underline"
+									>
+										{showAllProductLines ? "Show Less" : "Show More"}
 									</button>
 								)}
 							</div>
@@ -234,20 +335,21 @@ export default function Products() {
 							</div>
 							<div
 								ref={productsRef}
-								className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+								className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
 							>
 								{filteredProducts.map((product) => (
-									<div
+									<Link
 										key={product.id}
-										className="product-card bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-105"
+										href={`/products/${product.tenkhongdau}`}
+										className="flex flex-col bg-white rounded-lg shadow hover:shadow-xl transition-shadow"
 									>
-										<div className="relative aspect-square">
+										<div className="relative h-64">
 											<Image
 												src={`/uploads/products/${product.photo}`}
 												alt={product.ten_en}
 												fill
 												sizes="(max-width: 768px) 100vw, 33vw"
-												className="object-cover"
+												className="object-cover hover:scale-105 transition-transform duration-300"
 											/>
 											{product.noibat === 1 && (
 												<span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm">
@@ -255,28 +357,19 @@ export default function Products() {
 												</span>
 											)}
 										</div>
-										<div className="p-6">
-											<div className="flex justify-between items-start mb-4">
-												<h2 className="text-xl font-semibold text-gray-900 mb-2">
-													{product.ten_en}
-												</h2>
-											</div>
-											{product.list_ten_en && (
-												<p className="text-sm text-gray-600 mb-2">
-													Category: {product.list_ten_en}
+										<div className="flex flex-col flex-1 p-4">
+											<h2 className="text-xl font-semibold text-gray-900">
+												{truncateTitle(product.ten_en)}
+											</h2>
+											<div className="mt-auto">
+												<p className="text-lg font-medium text-blue-600">
+													{product.gia > 0
+														? `$${Number(product.gia).toFixed(2)}`
+														: "Contact for price"}
 												</p>
-											)}
-											<p className="text-gray-700 mb-4 line-clamp-2">
-												{product.mota_en}
-											</p>
-											<Link
-												href={`/products/${product.tenkhongdau}`}
-												className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-											>
-												View Details
-											</Link>
+											</div>
 										</div>
-									</div>
+									</Link>
 								))}
 							</div>
 						</main>

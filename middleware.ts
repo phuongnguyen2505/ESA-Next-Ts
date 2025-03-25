@@ -6,7 +6,7 @@ import { defaultLocale, locales } from "./i18n.config";
 export async function middleware(req: NextRequest) {
 	const { pathname } = req.nextUrl;
 
-	// 1️⃣ Localization: nếu thiếu locale ở đầu URL thì redirect
+	// Localization: nếu thiếu locale ở đầu URL thì redirect
 	const isMissingLocale = locales.every(
 		(locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
 	);
@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, req.url));
 	}
 
-	// 2️⃣ Dynamic redirect: nếu URL là /{locale}/products/{numericId}, fetch slug rồi redirect
+	// Dynamic redirect: nếu URL là /{locale}/products/{numericId}, fetch slug rồi redirect
 	const parts = pathname.split("/");
 	const locale = parts[1];
 	if (parts[2] === "products" && /^\d+$/.test(parts[3] || "")) {
@@ -32,7 +32,7 @@ export async function middleware(req: NextRequest) {
 		}
 	}
 
-	// 3️⃣ Admin authentication (ngoại trừ /admin/login)
+	// Admin authentication (ngoại trừ /admin/login)
 	if (
 		pathname.startsWith(`/${defaultLocale}/admin`) &&
 		!pathname.startsWith(`/${defaultLocale}/admin/login`)

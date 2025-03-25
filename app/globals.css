@@ -37,10 +37,10 @@ body {
 }
 
 .navbar.scrolled {
-  background-color: rgb(0 0 0 / 0.1);
+  background-color: rgb(0 0 0 / 0.5);
   filter: blur(5%);
   color: white;
-  text-shadow: 1px 1px 1px var(--light-blue);
+  /* text-shadow: 1px 1px 1px var(--light-blue); */
 }
 
 @media screen and (max-width: 1279px) {
@@ -48,7 +48,7 @@ body {
     background-color: white;
     filter: none;
     color: var(--black);
-    text-shadow: none;
+    /* text-shadow: none; */
   }
 }
 
