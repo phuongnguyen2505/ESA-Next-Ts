@@ -10,6 +10,28 @@ export const config = {
 	},
 };
 
+const saveFile = async (file: formidable.File, uploadDir: string) => {
+	const timestamp = Date.now();
+	const originalName = file.originalFilename || "default";
+	const ext = path.extname(originalName);
+	const baseName = path.basename(originalName, ext);
+	const newFileName = `${baseName}-${timestamp}${ext}`;
+	const newPath = path.join(uploadDir, newFileName);
+
+	try {
+		await fs.promises.copyFile(file.filepath, newPath);
+		await fs.promises.unlink(file.filepath);
+		return newFileName;
+	} catch (error) {
+		console.error(`Error saving file ${newFileName}:`, error);
+		if (error instanceof Error) {
+			throw new Error(`Failed to save file: ${error.message}`);
+		} else {
+			throw new Error("Failed to save file");
+		}
+	}
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const { id } = req.query;
 
@@ -69,7 +91,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 					// Lưu ảnh mới
 					const file = photo[0];
-					photoName = file.newFilename;
+					photoName = await saveFile(file, uploadDir);
 				} catch (error) {
 					console.error("Error handling photo:", error);
 					throw error;
@@ -81,7 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			let fileName = "";
 			if (file && Array.isArray(file) && file[0]) {
 				const fileItem = file[0];
-				fileName = fileItem.newFilename;
+				fileName = await saveFile(fileItem, uploadDir);
 			}
 
 			// Chuẩn bị dữ liệu cập nhật
