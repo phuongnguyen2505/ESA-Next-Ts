@@ -105,7 +105,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 				try {
 					const newPath = path.join(uploadDir, photoName);
-					fs.renameSync(file.filepath, newPath);
+					await fs.promises.copyFile(file.filepath, newPath);
+					fs.unlinkSync(file.filepath); // Xóa file tạm sau khi copy
 				} catch (error) {
 					console.error("Error saving photo:", error);
 					throw new Error("Failed to save photo");
@@ -125,7 +126,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 				try {
 					const newPath = path.join(uploadDir, fileName);
-					fs.renameSync(fileItem.filepath, newPath);
+					await fs.promises.copyFile(fileItem.filepath, newPath);
+					fs.unlinkSync(fileItem.filepath); // Xóa file tạm sau khi copy
 				} catch (error) {
 					console.error("Error saving file:", error);
 					throw new Error("Failed to save attachment");
