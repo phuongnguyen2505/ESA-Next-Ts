@@ -67,7 +67,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		}
 	} else if (req.method === "POST") {
 		try {
+			// Ensure upload directory exists
 			const uploadDir = path.join(process.cwd(), "public/uploads/products");
+			if (!fs.existsSync(uploadDir)) {
+				fs.mkdirSync(uploadDir, { recursive: true });
+			}
 
 			const form = formidable({
 				uploadDir,
@@ -78,31 +82,54 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>(
 				(resolve, reject) => {
 					form.parse(req, (err, fields, files) => {
-						if (err) reject(err);
-						else resolve([fields, files]);
+						if (err) {
+							console.error("Form parsing error:", err);
+							reject(err);
+						} else {
+							resolve([fields, files]);
+						}
 					});
 				},
 			);
 
-			// Xử lý file ảnh
+			// Handle photo upload
 			const photo = files.photo;
 			let photoName = "";
 			if (photo && Array.isArray(photo) && photo[0]) {
 				const file = photo[0];
-				photoName = file.originalFilename || "default.jpg";
-				const newPath = path.join(uploadDir, photoName);
-				fs.renameSync(file.filepath, newPath);
+				const timestamp = Date.now();
+				const originalName = file.originalFilename || "default.jpg";
+				const ext = path.extname(originalName);
+				const baseName = path.basename(originalName, ext);
+				photoName = `${baseName}-${timestamp}${ext}`;
+
+				try {
+					const newPath = path.join(uploadDir, photoName);
+					fs.renameSync(file.filepath, newPath);
+				} catch (error) {
+					console.error("Error saving photo:", error);
+					throw new Error("Failed to save photo");
+				}
 			}
 
-			// Xử lý file đính kèm (nếu có)
+			// Handle file attachment
 			const file = files.file;
 			let fileName = "";
 			if (file && Array.isArray(file) && file[0]) {
 				const fileItem = file[0];
-				fileName = fileItem.originalFilename || "default_name";
-				const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, "_");
-				const newPath = path.join(uploadDir, sanitizedFileName);
-				fs.renameSync(fileItem.filepath, newPath);
+				const timestamp = Date.now();
+				const originalName = fileItem.originalFilename || "default_name";
+				const ext = path.extname(originalName);
+				const baseName = path.basename(originalName, ext);
+				fileName = `${baseName}-${timestamp}${ext}`;
+
+				try {
+					const newPath = path.join(uploadDir, fileName);
+					fs.renameSync(fileItem.filepath, newPath);
+				} catch (error) {
+					console.error("Error saving file:", error);
+					throw new Error("Failed to save attachment");
+				}
 			}
 
 			const insertData = {
@@ -128,20 +155,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				luotxem: 0,
 			};
 
-			await new Promise((resolve, reject) => {
-				db.query("INSERT INTO table_product SET ?", insertData, (err, result) => {
-					if (err) reject(err);
-					else resolve(result);
+			try {
+				await new Promise((resolve, reject) => {
+					db.query("INSERT INTO table_product SET ?", insertData, (err, result) => {
+						if (err) {
+							console.error("Database insert error:", err);
+							reject(err);
+						} else {
+							resolve(result);
+						}
+					});
 				});
-			});
 
-			return res.status(201).json({ success: true, message: "Tạo thành công" });
+				return res.status(201).json({
+					success: true,
+					message: "Tạo thành công",
+					data: { photo: photoName, file: fileName },
+				});
+			} catch (dbError) {
+				// If DB insert fails, cleanup uploaded files
+				if (photoName) {
+					const photoPath = path.join(uploadDir, photoName);
+					if (fs.existsSync(photoPath)) fs.unlinkSync(photoPath);
+				}
+				if (fileName) {
+					const filePath = path.join(uploadDir, fileName);
+					if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+				}
+				throw dbError;
+			}
 		} catch (error) {
-			console.error("Lỗi khi tạo sản phẩm:", error);
+			console.error("Error creating product:", error);
 			return res.status(500).json({
 				success: false,
-				error: "Lỗi máy chủ nội bộ",
-				details: error instanceof Error ? error.message : "Lỗi không xác định",
+				error: "Internal Server Error",
+				details: error instanceof Error ? error.message : "Unknown error",
 			});
 		}
 	} else {
