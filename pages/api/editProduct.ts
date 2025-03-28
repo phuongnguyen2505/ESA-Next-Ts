@@ -64,37 +64,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			);
 
 			// Xử lý file ảnh mới (nếu có)
-			const photo = files.photo;
+			// Ưu tiên sử dụng URL Cloudinary được gửi qua fields.photo nếu có
 			let photoName = "";
+			if (
+				fields.photo &&
+				typeof fields.photo[0] === "string" &&
+				(fields.photo[0].startsWith("http://") || fields.photo[0].startsWith("https://"))
+			) {
+				photoName = fields.photo[0];
+			} else {
+				const photo = files.photo;
+				if (photo && Array.isArray(photo) && photo[0]) {
+					try {
+						// Lấy thông tin ảnh cũ để xóa
+						const [oldProduct] = await new Promise<{ photo: string }[]>((resolve, reject) => {
+							db.query(
+								"SELECT photo FROM table_product WHERE id = ?",
+								[id],
+								(err, results) => {
+									if (err) reject(err);
+									else resolve(results as { photo: string }[]);
+								},
+							);
+						});
 
-			if (photo && Array.isArray(photo) && photo[0]) {
-				try {
-					// Lấy thông tin ảnh cũ để xóa
-					const [oldProduct] = await new Promise<{ photo: string }[]>((resolve, reject) => {
-						db.query(
-							"SELECT photo FROM table_product WHERE id = ?",
-							[id],
-							(err, results) => {
-								if (err) reject(err);
-								else resolve(results as { photo: string }[]);
-							},
-						);
-					});
-
-					// Xóa ảnh cũ nếu tồn tại
-					if (oldProduct && oldProduct.photo) {
-						const oldPhotoPath = path.join(uploadDir, oldProduct.photo);
-						if (fs.existsSync(oldPhotoPath)) {
-							fs.unlinkSync(oldPhotoPath);
+						// Xóa ảnh cũ nếu tồn tại
+						if (oldProduct && oldProduct.photo) {
+							const oldPhotoPath = path.join(uploadDir, oldProduct.photo);
+							if (fs.existsSync(oldPhotoPath)) {
+								fs.unlinkSync(oldPhotoPath);
+							}
 						}
-					}
 
-					// Lưu ảnh mới
-					const file = photo[0];
-					photoName = await saveFile(file, uploadDir);
-				} catch (error) {
-					console.error("Error handling photo:", error);
-					throw error;
+						// Lưu ảnh mới từ file cục bộ
+						const file = photo[0];
+						photoName = await saveFile(file, uploadDir);
+					} catch (error) {
+						console.error("Error handling photo:", error);
+						throw error;
+					}
 				}
 			}
 

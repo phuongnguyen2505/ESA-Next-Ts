@@ -474,15 +474,15 @@ export default function Products() {
 								{sortItems(products).map((product) => (
 									<tr key={product.id}>
 										<td className="px-6 py-4 whitespace-nowrap">
-											<Image
+											<img
 												src={getImageUrl(product.photo)}
 												alt={product.ten_en}
 												width={100}
 												height={100}
 												className="object-cover rounded"
 												loading="lazy"
-												onError={(e: any) => {
-													e.target.src = "/no-image.png";
+												onError={(e) => {
+													e.currentTarget.src = "/no-image.png";
 												}}
 											/>
 										</td>

@@ -93,20 +93,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			);
 
 			// Handle photo upload
-			const photo = files.photo;
-			let photoName = "";
-			if (photo && Array.isArray(photo) && photo[0]) {
-				const file = photo[0];
+			let photoUrl = "";
+			// If form fields contain photo URL (updated from Cloudinary widget)
+			if (fields.photo && typeof fields.photo[0] === "string" && fields.photo[0].startsWith("http")) {
+				photoUrl = fields.photo[0];
+			} else if (files.photo && Array.isArray(files.photo) && files.photo[0]) {
+				// If no URL from Cloudinary, handle local file upload
+				const file = files.photo[0];
 				const timestamp = Date.now();
 				const originalName = file.originalFilename || "default.jpg";
 				const ext = path.extname(originalName);
 				const baseName = path.basename(originalName, ext);
-				photoName = `${baseName}-${timestamp}${ext}`;
+				photoUrl = `${baseName}-${timestamp}${ext}`;
 
 				try {
-					const newPath = path.join(uploadDir, photoName);
+					const newPath = path.join(uploadDir, photoUrl);
 					await fs.promises.copyFile(file.filepath, newPath);
-					fs.unlinkSync(file.filepath); // Xóa file tạm sau khi copy
+					fs.unlinkSync(file.filepath); // Delete temporary file after copying
 				} catch (error) {
 					console.error("Error saving photo:", error);
 					throw new Error("Failed to save photo");
@@ -127,7 +130,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				try {
 					const newPath = path.join(uploadDir, fileName);
 					await fs.promises.copyFile(fileItem.filepath, newPath);
-					fs.unlinkSync(fileItem.filepath); // Xóa file tạm sau khi copy
+					fs.unlinkSync(fileItem.filepath); // Delete temporary file after copying
 				} catch (error) {
 					console.error("Error saving file:", error);
 					throw new Error("Failed to save attachment");
@@ -145,7 +148,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				title_en: fields.title_en?.[0],
 				keywords_en: fields.keywords_en?.[0],
 				description_en: fields.description_en?.[0],
-				photo: photoName,
+				// Save Cloudinary URL to photo column
+				photo: photoUrl,
 				file: fileName || "",
 				stt: parseInt(fields.stt?.[0] || "1"),
 				hienthi: parseInt(fields.hienthi?.[0] || "1"),
@@ -172,12 +176,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				return res.status(201).json({
 					success: true,
 					message: "Tạo thành công",
-					data: { photo: photoName, file: fileName },
+					data: { photo: photoUrl, file: fileName },
 				});
 			} catch (dbError) {
 				// If DB insert fails, cleanup uploaded files
-				if (photoName) {
-					const photoPath = path.join(uploadDir, photoName);
+				if (photoUrl) {
+					const photoPath = path.join(uploadDir, photoUrl);
 					if (fs.existsSync(photoPath)) fs.unlinkSync(photoPath);
 				}
 				if (fileName) {

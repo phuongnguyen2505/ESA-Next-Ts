@@ -203,6 +203,17 @@ export default function Products() {
 		return sub + "...";
 	};
 
+	const getImageUrl = (photo: string | null) => {
+		if (!photo) return "/no-image.png";
+		if (photo.startsWith("http")) return photo;
+
+		try {
+			return `/uploads/products/${photo}`;
+		} catch {
+			return "/no-image.png";
+		}
+	};
+
 	return (
 		<ClientLayout>
 			<section className="w-full py-12 px-4 sm:px-6 lg:px-12 bg-gray-50">
@@ -341,15 +352,13 @@ export default function Products() {
 									<Link
 										key={product.id}
 										href={`/products/${product.tenkhongdau}`}
-										className="flex flex-col bg-white rounded-lg shadow hover:shadow-xl transition-shadow"
+										className="flex flex-col overflow-hidden bg-white rounded-lg shadow hover:shadow-xl transition-shadow"
 									>
 										<div className="relative h-64">
-											<Image
-												src={`/uploads/products/${product.photo}`}
+											<img
+												src={getImageUrl(product.photo)}
 												alt={product.ten_en}
-												fill
-												sizes="(max-width: 768px) 100vw, 33vw"
-												className="object-cover hover:scale-105 transition-transform duration-300"
+												className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
 											/>
 											{product.noibat === 1 && (
 												<span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm">

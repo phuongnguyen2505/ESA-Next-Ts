@@ -17,6 +17,7 @@ import { ProductList } from "@/types/productList";
 import { ProductCat } from "@/types/productCat";
 import { useRouter } from "next/navigation";
 import UploadFile from "../../../components/Ui/UploadFile";
+import { CldUploadWidget } from "next-cloudinary";
 
 type EditProductForm = Omit<
 	Product,
@@ -273,6 +274,18 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		}));
 	};
 
+	const handleCloudinaryUpload = (result: any) => {
+		if (result.event === "success") {
+			const url = result.info.secure_url;
+			// Cập nhật formData và preview
+			setFormData((prev) => ({
+				...prev,
+				photo: url,
+			}));
+			setImagePreview(url);
+		}
+	};
+
 	return (
 		<AdminLayout pageName={t("editProduct")}>
 			<Modal
@@ -403,14 +416,39 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 					onFileUpload={handleFileUpload}
 				/>
 
-				<InputImage
-					title={t("picture")}
-					name="photo"
-					onChange={handleImageUpload}
-					imagePreview={imagePreview}
-					currentImage={formData.photo}
-					t={t}
-				/>
+				{/* Cloudinary Upload cho ảnh */}
+				<div className="space-y-4">
+					<CldUploadWidget
+						uploadPreset="Vesa-Products"
+						signatureEndpoint="/api/signature?source=uw&upload_preset=Vesa-Products&folder=products"
+						options={{
+							maxFiles: 1,
+							sources: ["local", "url"],
+							folder: "products",
+						}}
+						onSuccess={handleCloudinaryUpload}
+					>
+						{({ open }) => (
+							<button
+								type="button"
+								onClick={() => open?.()}
+								className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+							>
+								{t("uploadImage")}
+							</button>
+						)}
+					</CldUploadWidget>
+
+					{formData.photo && (
+						<div className="relative w-[500px] h-[500px] mx-auto">
+							<img
+								src={formData.photo}
+								alt={t("picture")}
+								className="rounded-lg object-cover w-full h-full"
+							/>
+						</div>
+					)}
+				</div>
 
 				<InputSm
 					type="text"
