@@ -65,6 +65,37 @@ export default function ProductDetailPage() {
 		}
 	}, [product]);
 
+	const getImageUrl = (photo: string | null) => {
+		if (!photo) return "/no-image.png";
+		if (photo.startsWith("http")) return photo;
+
+		try {
+			return `/uploads/products/${photo}`;
+		} catch {
+			return "/no-image.png";
+		}
+	};
+
+	const truncateTitle = (text: string, maxLength: number = 30): string => {
+		if (text.length <= maxLength) return text;
+		let sub = text.slice(0, maxLength);
+		const lastSpace = sub.lastIndexOf(" ");
+		if (lastSpace !== -1) {
+			sub = sub.slice(0, lastSpace);
+		}
+		return sub + "...";
+	};
+
+	const truncateText = (text: string, maxLength: number = 20): string => {
+		if (text.length <= maxLength) return text;
+		let sub = text.slice(0, maxLength);
+		const lastSpace = sub.lastIndexOf(" ");
+		if (lastSpace !== -1) {
+			sub = sub.slice(0, lastSpace);
+		}
+		return sub + "...";
+	};
+
 	if (!product) {
 		return (
 			<ClientLayout>
@@ -89,22 +120,28 @@ export default function ProductDetailPage() {
 							Products
 						</Link>
 						<span className="mx-2">/</span>
-						<span className="font-semibold">{product.ten_en}</span>
+						<span className="text-blue-600">
+							{product.list_ten_en}
+						</span>
+						<span className="mx-2">/</span>
+						<span className="font-semibold">{product.cat_ten_en}</span>
+						{/* <span className="mx-2">/</span>
+						<span className="font-semibold">{product.ten_en}</span> */}
 					</nav>
 					{/* Main content */}
 					<div className="flex flex-col md:flex-row gap-8">
 						{/* Left: Image */}
 						<div className="md:w-2/5 h-fit rounded-lg shadow overflow-hidden aspect-square">
-							<Image
-								src={
-									product.photo.startsWith("http")
-										? product.photo
-										: `/uploads/products/${product.photo}`
-								}
+							<img
+								src={getImageUrl(product.photo)}
 								alt={product.ten_en}
 								width={500}
 								height={500}
-								className="w-full h-auto object-cover aspect-square"
+								className="object-cover rounded"
+								loading="lazy"
+								onError={(e) => {
+									e.currentTarget.src = "/no-image.png";
+								}}
 							/>
 						</div>
 						{/* Right: Details */}
@@ -167,29 +204,48 @@ export default function ProductDetailPage() {
 							{/* Related Products */}
 						</div>
 					</div>
+					{/* Content Section */}
+					{product.noidung_en && (
+						<div className="mt-12 border-t pt-8">
+							<h2 className="text-2xl font-semibold mb-4">Product Details</h2>
+							<div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: product.noidung_en }} />
+						</div>
+					)}
 					{related.length > 0 && (
-						<div>
-							<h2 className="text-2xl font-semibold mb-4">You May Also Like</h2>
-							<div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-								{related.map((r) => (
+						<div className="mt-12 border-t pt-8">
+							<h2 className="text-3xl font-bold mb-6">Related Products</h2>
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+								{related.slice(0, 8).map((r) => (
 									<Link
 										key={r.id}
 										href={`/products/${r.tenkhongdau}`}
-										className="block bg-white rounded-lg shadow hover:shadow-lg overflow-hidden"
+										className="group transition-all duration-300 hover:-translate-y-1 h-full"
 									>
-										<Image
-											src={
-												r.photo.startsWith("http")
-													? r.photo
-													: `/uploads/products/${r.photo}`
-											}
-											alt={r.ten_en}
-											width={150}
-											height={150}
-											className="w-full object-cover aspect-square"
-										/>
-										<div className="p-6 bg-slate-300">
-											<h3 className="font-medium">{r.ten_en}</h3>
+										<div className="bg-white rounded-xl shadow-md overflow-hidden h-full flex flex-col">
+											<div className="relative aspect-square">
+												<img
+													src={getImageUrl(r.photo)}
+													alt={r.ten_en}
+													className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+													loading="lazy"
+													onError={(e) => {
+														e.currentTarget.src = "/no-image.png";
+													}}
+												/>
+											</div>
+											<div className="p-4 flex flex-col flex-grow">
+												<h3 className="font-semibold text-lg text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+													{truncateTitle(r.ten_en)}
+												</h3>
+												<div className="mt-auto flex items-center justify-between">
+													<span className="text-sm text-gray-500">
+														{truncateText(r.cat_ten_en ?? '-')}
+													</span>
+													<span className="text-blue-600 font-medium">
+														{Number(r.gia) > 0 ? `$${Number(r.gia).toFixed(2)}` : 'Contact'}
+													</span>
+												</div>
+											</div>
 										</div>
 									</Link>
 								))}
