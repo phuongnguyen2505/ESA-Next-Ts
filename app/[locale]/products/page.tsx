@@ -2,12 +2,14 @@
 
 import ClientLayout from "@/app/components/layouts/ClientLayout";
 import React, { useEffect, useState, useRef, ChangeEvent, useMemo } from "react";
-import { Product } from "@/types/Product";
 import axios from "axios";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image";
 import Link from "next/link";
+import Pagination from "@/app/components/Ui/Pagination";
+import { Product } from "@/types/Product";
+import FilterSidebar from "@/app/components/Ui/FilterSidebar";
+import ProductCard from "@/app/components/Ui/ProductCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,17 +17,20 @@ export default function Products() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 	const [loading, setLoading] = useState(true);
-	// Cho phép chọn nhiều category
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [featuredOnly, setFeaturedOnly] = useState<boolean>(false);
-	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+	const [sortOrder, setSortOrder] = useState<
+		"asc" | "desc" | "newest" | "oldest" | "mostViewed"
+	>("asc");
 	const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
 	const [selectedProductLines, setSelectedProductLines] = useState<string[]>([]);
 	const [showAllProductLines, setShowAllProductLines] = useState<boolean>(false);
-
 	const productsRef = useRef<HTMLDivElement>(null);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 12;
 
-	// Fetch dữ liệu sản phẩm khi component mount
+	// Fetch products
 	useEffect(() => {
 		const fetchProducts = async () => {
 			try {
@@ -41,8 +46,8 @@ export default function Products() {
 		fetchProducts();
 	}, []);
 
+	// Tính toán dynamic categories và product lines
 	const dynamicCategories = useMemo((): string[] => {
-		// Nếu có lựa chọn product line, chỉ lấy các product thuộc những product line đó
 		const filtered =
 			selectedProductLines.length > 0
 				? products.filter(
@@ -50,16 +55,11 @@ export default function Products() {
 				  )
 				: products;
 		return Array.from(
-			new Set(
-				filtered
-					.map((p) => p.list_ten_en)
-					.filter((cat): cat is string => Boolean(cat)),
-			),
+			new Set(filtered.map((p) => p.list_ten_en).filter(Boolean) as string[]),
 		);
 	}, [products, selectedProductLines]);
 
 	const dynamicProductLines = useMemo((): string[] => {
-		// Nếu có lựa chọn category, chỉ lấy các product thuộc những category đó
 		const filtered =
 			selectedCategories.length > 0
 				? products.filter(
@@ -67,95 +67,90 @@ export default function Products() {
 				  )
 				: products;
 		return Array.from(
-			new Set(
-				filtered
-					.map((p) => p.cat_ten_en)
-					.filter((line): line is string => Boolean(line)),
-			),
+			new Set(filtered.map((p) => p.cat_ten_en).filter(Boolean) as string[]),
 		);
 	}, [products, selectedCategories]);
 
-	const visibleCategories = useMemo(() => {
-		return showAllCategories ? dynamicCategories : dynamicCategories.slice(0, 5);
-	}, [dynamicCategories, showAllCategories]);
+	const visibleCategories = useMemo(
+		() => (showAllCategories ? dynamicCategories : dynamicCategories.slice(0, 5)),
+		[dynamicCategories, showAllCategories],
+	);
+	const visibleProductLines = useMemo(
+		() => (showAllProductLines ? dynamicProductLines : dynamicProductLines.slice(0, 5)),
+		[dynamicProductLines, showAllProductLines],
+	);
 
-	const visibleProductLines = useMemo(() => {
-		return showAllProductLines ? dynamicProductLines : dynamicProductLines.slice(0, 5);
-	}, [dynamicProductLines, showAllProductLines]);
-
-	// Hàm xử lý chọn/gỡ bỏ category
+	// Hàm toggle
 	const toggleCategory = (category: string) => {
-		if (selectedCategories.includes(category)) {
-			setSelectedCategories(selectedCategories.filter((c) => c !== category));
+		if (category === "") {
+			setSelectedCategories([]);
 		} else {
-			setSelectedCategories([...selectedCategories, category]);
+			setSelectedCategories((prev) =>
+				prev.includes(category)
+					? prev.filter((c) => c !== category)
+					: [...prev, category],
+			);
 		}
 	};
 
-	// Hàm toggle chọn/bỏ chọn product line
 	const toggleProductLine = (line: string) => {
-		if (selectedProductLines.includes(line)) {
-			setSelectedProductLines(selectedProductLines.filter((l) => l !== line));
+		if (line === "") {
+			setSelectedProductLines([]);
 		} else {
-			setSelectedProductLines([...selectedProductLines, line]);
+			setSelectedProductLines((prev) =>
+				prev.includes(line) ? prev.filter((l) => l !== line) : [...prev, line],
+			);
 		}
 	};
 
-	// Áp dụng filter và sắp xếp mỗi khi các state thay đổi
+	// Lọc, sắp xếp sản phẩm
 	useEffect(() => {
 		let updated = [...products];
-
-		// Lọc theo các category đã chọn nếu có
 		if (selectedCategories.length > 0) {
 			updated = updated.filter(
 				(p) => p.list_ten_en && selectedCategories.includes(p.list_ten_en),
 			);
 		}
-
-		// Lọc theo product line
 		if (selectedProductLines.length > 0) {
 			updated = updated.filter(
 				(p) => p.cat_ten_en && selectedProductLines.includes(p.cat_ten_en),
 			);
 		}
-
 		if (featuredOnly) {
 			updated = updated.filter((p) => p.noibat === 1);
 		}
-
 		updated.sort((a, b) => {
-			const nameA = a.ten_en.toLowerCase();
-			const nameB = b.ten_en.toLowerCase();
-			if (nameA < nameB) return sortOrder === "asc" ? -1 : 1;
-			if (nameA > nameB) return sortOrder === "asc" ? 1 : -1;
-			return 0;
+			switch (sortOrder) {
+				case "asc":
+					return a.ten_en.toLowerCase().localeCompare(b.ten_en.toLowerCase());
+				case "desc":
+					return b.ten_en.toLowerCase().localeCompare(a.ten_en.toLowerCase());
+				case "newest":
+					return b.id - a.id;
+				case "oldest":
+					return a.id - b.id;
+				case "mostViewed":
+					return (b.luotxem || 0) - (a.luotxem || 0);
+				default:
+					return 0;
+			}
 		});
-
 		setFilteredProducts(updated);
-
-		// Lấy các phần tử .product-card sau khi render xong
+		// GSAP animation cho product cards
 		const cards = document.querySelectorAll(".product-card");
 		if (cards.length > 0) {
 			gsap.fromTo(
 				cards,
 				{ opacity: 0, y: 20 },
-				{
-					opacity: 1,
-					y: 0,
-					stagger: 0.1,
-					duration: 0.5,
-					ease: "power3.out",
-				},
+				{ opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: "power3.out" },
 			);
 		}
 	}, [selectedCategories, selectedProductLines, featuredOnly, sortOrder, products]);
 
-	// GSAP animation cho khối sản phẩm khi load xong dữ liệu
+	// Animation khi load sản phẩm
 	useEffect(() => {
 		if (!loading && productsRef.current) {
-			// Hủy các ScrollTrigger cũ
 			ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-
 			const tl = gsap.timeline({
 				defaults: { ease: "power3.out" },
 				scrollTrigger: {
@@ -164,13 +159,7 @@ export default function Products() {
 					toggleActions: "play none none none",
 				},
 			});
-
-			tl.from(productsRef.current, {
-				y: 30,
-				opacity: 0,
-				duration: 0.8,
-			});
-
+			tl.from(productsRef.current, { y: 30, opacity: 0, duration: 0.8 });
 			return () => {
 				tl.scrollTrigger?.kill();
 				gsap.killTweensOf(".product-card");
@@ -178,40 +167,42 @@ export default function Products() {
 		}
 	}, [loading]);
 
-	if (loading) {
-		return (
-			<ClientLayout>
-				<div className="flex items-center justify-center min-h-screen">
-					<div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
-				</div>
-			</ClientLayout>
+	// Tìm kiếm sản phẩm
+	useEffect(() => {
+		const updated = products.filter(
+			(product) =>
+				product.ten_en.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				(product.masp &&
+					product.masp.toLowerCase().includes(searchQuery.toLowerCase())),
 		);
-	}
+		setFilteredProducts(updated);
+		setCurrentPage(1);
+	}, [searchQuery, products]);
 
-	const truncateText = (text: string, maxLength: number = 20) => {
-		if (text.length <= maxLength) return text;
-		return text.slice(0, maxLength) + "...";
-	};
+	// Phân trang
+	const totalPages = useMemo(
+		() => Math.ceil(filteredProducts.length / itemsPerPage),
+		[filteredProducts.length, itemsPerPage],
+	);
+	const paginatedProducts = useMemo(
+		() =>
+			filteredProducts.slice(
+				(currentPage - 1) * itemsPerPage,
+				currentPage * itemsPerPage,
+			),
+		[filteredProducts, currentPage, itemsPerPage],
+	);
 
-	const truncateTitle = (text: string, maxLength: number = 35): string => {
+	// Một số hàm tiện ích
+	const truncateTitle = (text: string, maxLength: number = 35) => {
 		if (text.length <= maxLength) return text;
 		let sub = text.slice(0, maxLength);
 		const lastSpace = sub.lastIndexOf(" ");
-		if (lastSpace !== -1) {
-			sub = sub.slice(0, lastSpace);
-		}
-		return sub + "...";
+		return (lastSpace !== -1 ? sub.slice(0, lastSpace) : sub) + "...";
 	};
-
 	const getImageUrl = (photo: string | null) => {
 		if (!photo) return "/no-image.png";
-		if (photo.startsWith("http")) return photo;
-
-		try {
-			return `/uploads/products/${photo}`;
-		} catch {
-			return "/no-image.png";
-		}
+		return photo.startsWith("http") ? photo : `/uploads/products/${photo}`;
 	};
 
 	return (
@@ -221,166 +212,112 @@ export default function Products() {
 					<h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
 						Our Products
 					</h1>
-
-					{/* Layout với sidebar bên trái và danh sách sản phẩm bên phải */}
 					<div className="flex flex-col md:flex-row gap-8">
-						{/* Sidebar bộ lọc */}
-						<aside className="md:w-1/4 bg-white p-6 rounded-lg shadow-md">
-							<h2 className="text-2xl font-semibold text-gray-800 mb-6">
-								Filters
-							</h2>
-
-							{/* Lọc theo sản phẩm nổi bật */}
+						<aside className="md:w-1/4 h-fit bg-white p-6 rounded-lg shadow-md">
+							<h2 className="text-xl font-semibold mb-4">Filters</h2>
 							<div className="mb-6">
 								<button
 									onClick={() => setFeaturedOnly(!featuredOnly)}
-									className={`px-3 py-1 rounded-full border ${
+									className={`px-3 py-1 rounded-full border hover:text-white hover:bg-blue-400 ${
 										featuredOnly ? "bg-blue-600 text-white" : "text-gray-700"
 									}`}
 								>
-									Featured Only
+									Featured
 								</button>
 							</div>
-
-							{/* Lọc theo Category (Multi-select) */}
 							<div className="mb-6">
-								<label className="block text-gray-700 font-medium mb-2">
-									Categories:
-								</label>
-								<div className="flex flex-wrap gap-2">
-									<button
-										onClick={() => setSelectedCategories([])}
-										className={`px-3 py-1 rounded-full border ${
-											selectedCategories.length === 0
-												? "bg-blue-600 text-white"
-												: "text-gray-700"
-										}`}
-									>
-										All
-									</button>
-									{visibleCategories.map((cat, index) => (
-										<button
-											key={index}
-											onClick={() => toggleCategory(cat)}
-											className={`px-3 py-1 rounded-full border ${
-												selectedCategories.includes(cat)
-													? "bg-blue-600 text-white"
-													: "text-gray-700"
-											}`}
-										>
-											{truncateText(cat)}
-										</button>
-									))}
-								</div>
-								{dynamicCategories.length > 5 && (
-									<button
-										onClick={() => setShowAllCategories(!showAllCategories)}
-										className="mt-2 text-sm text-blue-600 hover:underline"
-									>
-										{showAllCategories ? "Show Less" : "Show More"}
-									</button>
-								)}
+								<FilterSidebar
+									title="Categories"
+									filters={visibleCategories.map((cat) => ({
+										label: cat,
+										value: cat,
+									}))}
+									selectedFilters={selectedCategories}
+									onToggle={toggleCategory}
+									onReset={() => setSelectedCategories([])}
+									showMoreCondition={dynamicCategories.length > 5}
+									onToggleShowMore={() => setShowAllCategories((prev) => !prev)}
+									isExpanded={showAllCategories}
+								/>
 							</div>
 							<div className="mb-6">
-								<label className="block text-gray-700 font-medium mb-2">
-									Product Lines:
-								</label>
-								<div className="flex flex-wrap gap-2">
-									{/* Nút “All” cho product line */}
-									<button
-										onClick={() => setSelectedProductLines([])}
-										className={`px-3 py-1 rounded-full border ${
-											selectedProductLines.length === 0
-												? "bg-blue-600 text-white"
-												: "text-gray-700"
-										}`}
-									>
-										All
-									</button>
-
-									{/* Danh sách product line hiển thị */}
-									{visibleProductLines.map((line, index) => (
-										<button
-											key={index}
-											onClick={() => toggleProductLine(line)}
-											className={`px-3 py-1 rounded-full border ${
-												selectedProductLines.includes(line)
-													? "bg-blue-600 text-white"
-													: "text-gray-700"
-											}`}
-										>
-											{truncateText(line)}
-										</button>
-									))}
-								</div>
-
-								{/* Nút Show More / Show Less nếu có nhiều hơn 5 product line */}
-								{dynamicProductLines.length > 5 && (
-									<button
-										onClick={() => setShowAllProductLines(!showAllProductLines)}
-										className="mt-2 text-sm text-blue-600 hover:underline"
-									>
-										{showAllProductLines ? "Show Less" : "Show More"}
-									</button>
-								)}
+								<FilterSidebar
+									title="Product Lines"
+									filters={visibleProductLines.map((line) => ({
+										label: line,
+										value: line,
+									}))}
+									selectedFilters={selectedProductLines}
+									onToggle={toggleProductLine}
+									onReset={() => setSelectedProductLines([])}
+									showMoreCondition={dynamicProductLines.length > 5}
+									onToggleShowMore={() =>
+										setShowAllProductLines((prev) => !prev)
+									}
+									isExpanded={showAllProductLines}
+								/>
 							</div>
 						</aside>
-
-						{/* Main content danh sách sản phẩm */}
 						<main className="md:w-3/4">
-							<div className="w-[30%] ml-auto mb-4">
-								<label className="block text-gray-700 font-medium mb-2">
-									Sort:
-								</label>
-								<select
-									aria-label="Sort products by name"
-									value={sortOrder}
-									onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-										setSortOrder(e.target.value as "asc" | "desc")
-									}
-									className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-								>
-									<option value="asc">A - Z</option>
-									<option value="desc">Z - A</option>
-								</select>
+							<div className="flex flex-col items-end sm:flex-row justify-between mb-6">
+								<div className="w-[30%]">
+									<label className="block text-gray-700 font-medium mb-2">
+										Sort:
+									</label>
+									<select
+										aria-label="Sort by"
+										value={sortOrder}
+										onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+											setSortOrder(
+												e.target.value as
+													| "asc"
+													| "desc"
+													| "newest"
+													| "oldest"
+													| "mostViewed",
+											)
+										}
+										className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+									>
+										<option value="asc">Name (A - Z)</option>
+										<option value="desc">Name (Z - A)</option>
+										<option value="newest">Newest First</option>
+										<option value="oldest">Oldest First</option>
+										<option value="mostViewed">Most Viewed</option>
+									</select>
+								</div>
+								<div className="mt-4 sm:mt-0">
+									<input
+										type="text"
+										value={searchQuery}
+										onChange={(e: ChangeEvent<HTMLInputElement>) =>
+											setSearchQuery(e.target.value)
+										}
+										placeholder="Search products..."
+										className="px-4 py-2 border border-gray-300 rounded-md w-full max-w-sm"
+									/>
+								</div>
 							</div>
 							<div
 								ref={productsRef}
 								className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
 							>
-								{filteredProducts.map((product) => (
-									<Link
+								{paginatedProducts.map((product) => (
+									<ProductCard
 										key={product.id}
-										href={`/products/${product.tenkhongdau}`}
-										className="flex flex-col overflow-hidden bg-white rounded-lg shadow hover:shadow-xl transition-shadow"
-									>
-										<div className="relative h-64">
-											<img
-												src={getImageUrl(product.photo)}
-												alt={product.ten_en}
-												className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
-											/>
-											{product.noibat === 1 && (
-												<span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm">
-													Featured
-												</span>
-											)}
-										</div>
-										<div className="flex flex-col flex-1 p-4">
-											<h2 className="text-xl font-semibold text-gray-900">
-												{truncateTitle(product.ten_en)}
-											</h2>
-											<div className="mt-auto">
-												<p className="text-lg font-medium text-blue-600">
-													{product.gia > 0
-														? `$${Number(product.gia).toFixed(2)}`
-														: "Contact for price"}
-												</p>
-											</div>
-										</div>
-									</Link>
+										product={product}
+										truncateTitle={truncateTitle}
+										getImageUrl={getImageUrl}
+									/>
 								))}
 							</div>
+							{totalPages > 1 && (
+								<Pagination
+									currentPage={currentPage}
+									totalPages={totalPages}
+									onPageChange={setCurrentPage}
+								/>
+							)}
 						</main>
 					</div>
 				</div>

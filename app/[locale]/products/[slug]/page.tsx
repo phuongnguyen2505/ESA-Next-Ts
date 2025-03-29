@@ -120,9 +120,7 @@ export default function ProductDetailPage() {
 							Products
 						</Link>
 						<span className="mx-2">/</span>
-						<span className="text-blue-600">
-							{product.list_ten_en}
-						</span>
+						<span className="text-blue-600">{product.list_ten_en}</span>
 						<span className="mx-2">/</span>
 						<span className="font-semibold">{product.cat_ten_en}</span>
 						{/* <span className="mx-2">/</span>
@@ -208,9 +206,10 @@ export default function ProductDetailPage() {
 					{product.noidung_en && (
 						<div className="mt-12 border-t pt-8">
 							<h2 className="text-2xl font-semibold mb-4">Product Details</h2>
-							<div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: product.noidung_en }} />
+							<div dangerouslySetInnerHTML={{ __html: product.noidung_en }} />
 						</div>
 					)}
+
 					{related.length > 0 && (
 						<div className="mt-12 border-t pt-8">
 							<h2 className="text-3xl font-bold mb-6">Related Products</h2>
@@ -239,10 +238,12 @@ export default function ProductDetailPage() {
 												</h3>
 												<div className="mt-auto flex items-center justify-between">
 													<span className="text-sm text-gray-500">
-														{truncateText(r.cat_ten_en ?? '-')}
+														{truncateText(r.cat_ten_en ?? "-")}
 													</span>
 													<span className="text-blue-600 font-medium">
-														{Number(r.gia) > 0 ? `$${Number(r.gia).toFixed(2)}` : 'Contact'}
+														{Number(r.gia) > 0
+															? `$${Number(r.gia).toFixed(2)}`
+															: "Contact"}
 													</span>
 												</div>
 											</div>

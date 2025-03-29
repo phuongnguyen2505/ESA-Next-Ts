@@ -6,6 +6,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import gsap from "gsap";
+import Switch from "../Ui/Switch";
 
 type NavItem = {
 	key: string;
@@ -63,7 +64,6 @@ export default function Menu() {
 			))}
 		</ul>
 	);
-
 	// GSAP animation cho mobile menu khi mở
 	useEffect(() => {
 		if (mobileMenuOpen && mobileMenuRef.current) {

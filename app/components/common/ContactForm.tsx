@@ -132,7 +132,7 @@ export default function ContactForm() {
 	return (
 		<section
 			ref={sectionRef}
-			className="relative bg-gradient-to-b from-gray-50 to-gray-100 py-16 md:py-24 overflow-hidden"
+			className="relative w-full bg-gradient-to-b from-gray-50 to-gray-100 py-16 md:py-24 overflow-hidden"
 		>
 			{/* Popup Notification */}
 			{status.type && (

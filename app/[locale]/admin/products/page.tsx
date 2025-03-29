@@ -15,13 +15,14 @@ import { Product } from "@/types/Product";
 import { ProductList } from "@/types/productList";
 import { ProductCat } from "@/types/productCat";
 import SortSelect from "@/app/[locale]/admin/components/Ui/SortSelect";
+import Pagination from "@/app/components/Ui/Pagination";
 
 interface ProductMenuItem {
 	translationKey: string;
 	sortable?: boolean;
 }
 
-const truncateText = (text: string, maxLength: number = 20) => {
+const truncateText = (text: string, maxLength: number = 15) => {
 	if (text.length <= maxLength) return text;
 	return text.slice(0, maxLength) + "...";
 };
@@ -104,6 +105,11 @@ export default function Products() {
 		key: "ngaytao",
 		direction: "desc",
 	});
+
+	// Thêm state cho tìm kiếm và phân trang
+	const [searchQuery, setSearchQuery] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
 
 	const handleToggleStatus = async (
 		id: number,
@@ -333,13 +339,26 @@ export default function Products() {
 					: b.noibat - a.noibat;
 			}
 			if (sortConfig.key === "sptb") {
-				return sortConfig.direction === "asc"
-					? a.sptb - b.sptb
-					: b.sptb - a.sptb;
+				return sortConfig.direction === "asc" ? a.sptb - b.sptb : b.sptb - a.sptb;
 			}
 			return 0;
 		});
 	};
+
+	// Lọc sản phẩm theo search query (ví dụ so sánh tên sản phẩm và mã sản phẩm)
+	const filteredProducts = products.filter(
+		(product) =>
+			product.ten_en.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			(product.masp && product.masp.toLowerCase().includes(searchQuery.toLowerCase())),
+	);
+
+	// Áp dụng sort và phân trang
+	const sortedProducts = sortItems(filteredProducts);
+	const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+	const paginatedProducts = sortedProducts.slice(
+		(currentPage - 1) * itemsPerPage,
+		currentPage * itemsPerPage,
+	);
 
 	return (
 		<AdminLayout pageName={t("products")}>
@@ -363,17 +382,17 @@ export default function Products() {
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-xl font-bold">{t("productList")}</h2>
 					<div className="space-x-2 flex items-center gap-1">
-						<Link href="/admin/products/create">
+						<Link href="/admin/products/create" title="Create Product">
 							<Button type="button">
 								<FaPlus className="h-5 w-5" />
 							</Button>
 						</Link>
-						<Link href="/admin/products/createList">
+						<Link href="/admin/products/createList" title="Create Category">
 							<Button type="button">
 								<RiPlayListAddFill className="h-5 w-5" />
 							</Button>
 						</Link>
-						<Link href="/admin/products/createCat">
+						<Link href="/admin/products/createCat" title="Create Product Line">
 							<Button type="button">
 								<FaFolderPlus className="h-5 w-5" />
 							</Button>
@@ -418,7 +437,22 @@ export default function Products() {
 				</div>
 
 				{activeTab === "products" && (
-					<div className="overflow-x-auto">
+					<div className="overflow-x-auto space-y-4">
+						{/* Ô Tìm Kiếm */}
+						<div className="mb-4 flex justify-end">
+							<input
+								type="text"
+								placeholder="Search products..."
+								value={searchQuery}
+								onChange={(e) => {
+									setSearchQuery(e.target.value);
+									setCurrentPage(1); // Reset trang khi tìm kiếm
+								}}
+								className="px-3 py-2 border rounded-md w-full max-w-sm dark:text-black"
+							/>
+						</div>
+
+						{/* Bảng sản phẩm */}
 						<table className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
 							<thead className="bg-gray-100 dark:bg-gray-700">
 								<tr>
@@ -471,12 +505,13 @@ export default function Products() {
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-gray-200 dark:divide-gray-600 text-center">
-								{sortItems(products).map((product) => (
+								{paginatedProducts.map((product) => (
 									<tr key={product.id}>
 										<td className="px-6 py-4 whitespace-nowrap">
 											<img
 												src={getImageUrl(product.photo)}
 												alt={product.ten_en}
+												title={product.ten_en}
 												width={100}
 												height={100}
 												className="object-cover rounded"
@@ -494,10 +529,16 @@ export default function Products() {
 												{truncateText(product.ten_en)}
 											</div>
 										</td>
-										<td className="px-6 py-4 whitespace-nowrap">
+										<td
+											className="px-6 py-4 whitespace-nowrap"
+											title={product.list_ten_en}
+										>
 											{truncateText(product.list_ten_en ?? "-")}
 										</td>
-										<td className="px-6 py-4 whitespace-nowrap">
+										<td
+											className="px-6 py-4 whitespace-nowrap"
+											title={product.cat_ten_en}
+										>
 											{truncateText(product.cat_ten_en ?? "-")}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
@@ -538,7 +579,6 @@ export default function Products() {
 												{product.sptb ? t("topProduct") : t("normal")}
 											</button>
 										</td>
-
 										<td className="px-6 py-4 whitespace-nowrap">
 											<div className="flex items-center justify-center">
 												<button
@@ -594,6 +634,15 @@ export default function Products() {
 								))}
 							</tbody>
 						</table>
+
+						{/* Pagination Controls */}
+						{totalPages > 1 && (
+							<Pagination
+								currentPage={currentPage}
+								totalPages={totalPages}
+								onPageChange={setCurrentPage}
+							/>
+						)}
 					</div>
 				)}
 

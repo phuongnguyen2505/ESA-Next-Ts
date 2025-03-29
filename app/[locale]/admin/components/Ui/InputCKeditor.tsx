@@ -3,7 +3,7 @@ import { CKEditor, useCKEditorCloud } from "@ckeditor/ckeditor5-react";
 import MyUploadAdapter from "@/pages/api/myUploadAdapter";
 
 const LICENSE_KEY =
-	"eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NjkwMzk5OTksImp0aSI6IjcyMmU5ZjIxLTIxYjEtNGM5MS1hY2I4LWRiNmNmOTViMWMzNSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiXSwiZmVhdHVyZXMiOlsiRFJVUCJdLCJ2YyI6IjQyNjVkMmExIn0.UY5guHVpgWOGrzKxfSnS6Qd0flEUAuDZwW0PaLiQStxgPAdFl8xnOxoptUzv80BkJk8o6lM8Uh-BnFXk-jRfhA"; // Replace with your license key
+	"eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NjkwMzk5OTksImp0aSI6IjcyMmU5ZjIxLTIxYjEtNGM5MS1hY2I4LWRiNmNmOTViMWMzNSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiXSwiZmVhdHVyZXMiOlsiRFJVUCJdLCJ2YyI6IjQyNjVkMmExIn0.UY5guHVpgWOGrzKxfSnS6Qd0flEUAuDZwW0PaLiQStxgPAdFl8xnOxoptUzv80BkJk8o6lM8Uh-BnFXk-jRfhA";
 
 interface RichTextEditorProps {
 	value: string;
@@ -11,15 +11,11 @@ interface RichTextEditorProps {
 	title: string;
 }
 
-const RichTextEditor: React.FC<RichTextEditorProps> = ({
-	value,
-	onChange,
-	title,
-}) => {
+const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, title }) => {
 	const editorContainerRef = useRef<HTMLDivElement | null>(null);
 	const editorRef = useRef<HTMLDivElement | null>(null);
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
-	const mountedRef = useRef(false); // Track component mount status
+	const mountedRef = useRef(false);
 	const cloud = useCKEditorCloud({ version: "44.1.0" });
 
 	useEffect(() => {
@@ -182,6 +178,16 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 						"resizeImage",
 					],
 				},
+				htmlSupport: {
+					allow: [
+						{
+							name: /.*/,
+							attributes: true,
+							classes: true,
+							styles: true,
+						},
+					],
+				},
 				extraPlugins: [uploadPlugin],
 			},
 		};
@@ -190,9 +196,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 	return (
 		<div className="main-container">
 			<div className="editor-container" ref={editorContainerRef}>
-				<label className="block text-sm font-medium mb-1">
-					{title}
-				</label>
+				<label className="block text-sm font-medium mb-1">{title}</label>
 				<div className="editor-container__editor text-black" ref={editorRef}>
 					{ClassicEditor && editorConfig ? (
 						<CKEditor

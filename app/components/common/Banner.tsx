@@ -55,45 +55,24 @@ export default function Banner({}: BannerProps) {
 		des: "Welcome to our website",
 	};
 
-	useEffect(() => {
-		if (titleRef.current && descRef.current) {
-			gsap.fromTo(
-				titleRef.current,
-				{ opacity: 0, y: -50 },
-				{ opacity: 1, y: 0, duration: 1 },
-			);
-			gsap.fromTo(
-				descRef.current,
-				{ opacity: 0, y: 50 },
-				{ opacity: 1, y: 0, duration: 1, delay: 0.5 },
-			);
-		}
-	}, [currentBanner.title, currentBanner.des]);
-
 	const handleAnimationComplete = () => {
-		console.log("Animation completed!");
+		console.log("");
 	};
 
 	return (
-		<section className="bg-[#202037] relative flex items-center overflow-hidden px-16 py-10 sm:py-16 rounded-t-2xl">
-			{/* Background Effects */}
-			<div className="absolute inset-0 bg-gradient-to-br from-[#1e1e2f] to-[#0d0d1a]" />
+		<section className="relative bg-gradient-to-br from-[#1e1e2f] to-[#0d0d1a] overflow-hidden rounded-t-2xl px-6 py-12 sm:px-8 sm:py-16">
+			{/* Hiệu ứng nền trang trí */}
+			<div className="absolute inset-0 bg-[url('/patterns/diagonal-lines.png')] opacity-20" />
 
-			{/* Content Container */}
-			<div className="container mx-auto px-4 text-left">
-				{/* <h1
-					ref={titleRef}
-					className="font-bold text-white text-4xl sm:text-6xl md:text-7xl lg:text-[18vmin] xl:text-[20vmin]"
-				>
-					{currentBanner.title}
-				</h1> */}
+			{/* Nội dung chính */}
+			<div className="relative z-10 max-w-7xl mx-auto text-left">
 				<BlurText
 					text={currentBanner.title}
 					delay={200}
 					animateBy="letters"
 					direction="top"
 					onAnimationComplete={handleAnimationComplete}
-					className="mb-8 font-bold text-white text-4xl sm:text-6xl md:text-7xl lg:text-[18vmin] xl:text-[20vmin]"
+					className="mb-6 font-extrabold text-white text-4xl sm:text-6xl md:text-7xl lg:text-[18vmin] xl:text-[20vmin] tracking-wide"
 				/>
 				<BlurText
 					text={currentBanner.des}
@@ -101,14 +80,8 @@ export default function Banner({}: BannerProps) {
 					animateBy="words"
 					direction="top"
 					onAnimationComplete={handleAnimationComplete}
-					className="mt-4 mb-8 text-white text-sm sm:text-base md:text-lg lg:text-[3vmin]"
+					className="mt-2 mb-8 text-white text-sm sm:text-base md:text-lg lg:text-[3vmin] leading-relaxed"
 				/>
-				{/* <p
-					ref={descRef}
-					className="mt-4 text-white text-sm sm:text-base md:text-lg lg:text-[3vmin]"
-				>
-					{currentBanner.des}
-				</p> */}
 			</div>
 		</section>
 	);
