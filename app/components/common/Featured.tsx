@@ -103,26 +103,30 @@ export default function Featured() {
 
 								{/* Links Block - Đặt ở cuối */}
 								<div className="mt-4 flex items-center justify-between flex-col xl:flex-row md:flex-col">
-									<Link
-										href={`/uploads/products/${product.file}`}
-										className="inline-flex items-center space-x-2 text-sm text-blue-400 hover:text-blue-600 transition-colors duration-300"
-									>
-										<span>Download PDF</span>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											className="h-4 w-4"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
+									{product.file && (
+										<a
+											href={product.file}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="inline-flex items-center space-x-2 text-sm text-blue-400 hover:text-blue-600 transition-colors duration-300"
 										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-											/>
-										</svg>
-									</Link>
+											<span>Download PDF</span>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												className="h-4 w-4"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
+											>
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth={2}
+													d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+												/>
+											</svg>
+										</a>
+									)}
 									<Link
 										href={`/products/${product.tenkhongdau}`}
 										className="inline-flex items-center space-x-2 text-sm text-blue-400 hover:text-blue-600 transition-colors duration-300"
