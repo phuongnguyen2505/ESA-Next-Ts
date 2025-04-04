@@ -302,14 +302,16 @@ export default function Products() {
 								ref={productsRef}
 								className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
 							>
-								{paginatedProducts.map((product) => (
-									<ProductCard
-										key={product.id}
-										product={product}
-										truncateTitle={truncateTitle}
-										getImageUrl={getImageUrl}
-									/>
-								))}
+								{paginatedProducts
+									.filter((product) => product.hienthi === 1)
+									.map((product) => (
+										<ProductCard
+											key={product.id}
+											product={product}
+											truncateTitle={truncateTitle}
+											getImageUrl={getImageUrl}
+										/>
+									))}
 							</div>
 							{totalPages > 1 && (
 								<Pagination

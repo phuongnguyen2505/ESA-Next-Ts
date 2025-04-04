@@ -76,6 +76,16 @@ export default function ProductDetailPage() {
 		}
 	};
 
+	const getPdf = (file: string) => {
+		if (file.startsWith("http")) return file;
+
+		try {
+			return `/uploads/products/${file}`;
+		} catch {
+			return "";
+		}
+	};
+
 	const truncateTitle = (text: string, maxLength: number = 30): string => {
 		if (text.length <= maxLength) return text;
 		let sub = text.slice(0, maxLength);
@@ -165,12 +175,14 @@ export default function ProductDetailPage() {
 							</div>
 							<div className="flex gap-4">
 								{product.file && (
-									<Link
-										href={`/uploads/products/${product.file}`}
+									<a
+										href={product.file}
+										target="_blank"
+										rel="noopener noreferrer"
 										className="px-6 py-3 bg-gray-200 rounded-lg hover:bg-gray-300"
 									>
 										Download Catalog
-									</Link>
+									</a>
 								)}
 								<Link
 									href="/contact"

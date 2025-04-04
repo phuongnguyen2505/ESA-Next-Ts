@@ -16,7 +16,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, title 
 	const editorRef = useRef<HTMLDivElement | null>(null);
 	const [isLayoutReady, setIsLayoutReady] = useState(false);
 	const mountedRef = useRef(false);
-	const cloud = useCKEditorCloud({ version: "44.1.0" });
+	const cloud = useCKEditorCloud({ version: "44.3.0" });
 
 	useEffect(() => {
 		mountedRef.current = true;
@@ -44,6 +44,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, title 
 			Autoformat,
 			AutoImage,
 			Autosave,
+			Alignment,
 			BalloonToolbar,
 			BlockQuote,
 			Bold,
@@ -101,6 +102,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, title 
 						"fontColor",
 						"fontBackgroundColor",
 						"|",
+						"alignment",
 						"bold",
 						"italic",
 						"underline",
@@ -125,6 +127,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, title 
 					Autoformat,
 					AutoImage,
 					Autosave,
+					Alignment,
 					BalloonToolbar,
 					BlockQuote,
 					Bold,

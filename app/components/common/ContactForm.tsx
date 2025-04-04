@@ -8,6 +8,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import axiosInstance from "@/lib/axios";
 import { Contact } from "@/types/contact";
 
+interface Setting {
+	email?: string;
+	diachi_en?: string;
+	hotline?: string;
+}
+
 export default function ContactForm() {
 	const sectionRef = useRef(null);
 	const headingRef = useRef(null);
@@ -22,6 +28,9 @@ export default function ContactForm() {
 		message: "",
 	});
 
+	// State chứa thông tin setting (email, địa chỉ, hotline)
+	const [setting, setSetting] = useState<Setting>({});
+
 	const [status, setStatus] = useState<{
 		type: "success" | "error" | null;
 		message: string;
@@ -29,6 +38,25 @@ export default function ContactForm() {
 		type: null,
 		message: "",
 	});
+
+	// Fetch dữ liệu setting từ API khi component mount
+	useEffect(() => {
+		async function fetchSetting() {
+			try {
+				const res = await axiosInstance.get<{ setting: Setting }>("/api/settings");
+				console.log("Setting API response:", res.data);
+				if (res.data && res.data.setting) {
+					setSetting(res.data.setting);
+				} else {
+					setSetting({ email: "", diachi_en: "", hotline: "" });
+				}
+			} catch (err) {
+				console.error("Error fetching setting data:", err);
+				setSetting({ email: "", diachi_en: "", hotline: "" });
+			}
+		}
+		fetchSetting();
+	}, []);
 
 	useEffect(() => {
 		gsap.registerPlugin(ScrollTrigger);
@@ -71,7 +99,8 @@ export default function ContactForm() {
 
 			// Social icons stagger animation
 			if (socialRef.current) {
-				gsap.from(socialRef.current.children, {
+				const socials = Array.from(socialRef.current.children);
+				gsap.from(socials, {
 					scale: 0,
 					opacity: 0,
 					duration: 0.5,
@@ -230,8 +259,8 @@ export default function ContactForm() {
 							<button
 								type="submit"
 								className="w-full bg-gradient-to-r from-[#23233d] to-[#444466] text-white px-6 py-3 rounded-xl 
-                                transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 
-                                focus:ring-[#23233d] focus:ring-opacity-50"
+                transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 
+                focus:ring-[#23233d] focus:ring-opacity-50"
 							>
 								Send Message
 							</button>
@@ -242,7 +271,7 @@ export default function ContactForm() {
 					<div
 						ref={infoRef}
 						className="bg-gradient-to-br from-[#23233d] to-[#444466] text-white p-8 rounded-2xl shadow-lg 
-                        transform hover:scale-[1.02] transition-transform duration-300"
+            transform hover:scale-[1.02] transition-transform duration-300"
 					>
 						<div>
 							<h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
@@ -276,7 +305,7 @@ export default function ContactForm() {
 									<div>
 										<h4 className="text-lg font-medium">Address</h4>
 										<p className="text-white text-opacity-80">
-											
+											{setting.diachi_en || ""}
 										</p>
 									</div>
 								</div>
@@ -298,7 +327,9 @@ export default function ContactForm() {
 									</div>
 									<div>
 										<h4 className="text-lg font-medium">Phone</h4>
-										<p className="text-white text-opacity-80"></p>
+										<p className="text-white text-opacity-80">
+											{setting.hotline || ""}
+										</p>
 									</div>
 								</div>
 								<div className="flex items-start">
@@ -320,7 +351,7 @@ export default function ContactForm() {
 									<div>
 										<h4 className="text-lg font-medium">Email</h4>
 										<p className="text-white text-opacity-80">
-											
+											{setting.email || ""}
 										</p>
 									</div>
 								</div>
@@ -328,7 +359,7 @@ export default function ContactForm() {
 						</div>
 						<div className="mt-8">
 							<h4 className="text-lg font-medium mb-4">Follow Us</h4>
-							<div ref={socialRef} className="flex space-x-4">
+							<div className="flex space-x-4">
 								{[
 									{ name: "Facebook", icon: "/images/fb.svg" },
 									{ name: "Zalo", icon: "/images/zalo.svg" },
@@ -338,7 +369,7 @@ export default function ContactForm() {
 										key={social.name}
 										href="/"
 										className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center 
-                                        hover:bg-white/20 transform hover:scale-110 transition-all duration-300"
+                    hover:bg-white/20 transform hover:scale-110 transition-all duration-300"
 									>
 										<span className="sr-only">{social.name}</span>
 										<Image

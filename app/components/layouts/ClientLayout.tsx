@@ -26,28 +26,32 @@ export default function ClientLayout({
 		<>
 			<Head>
 				<title>{title || "VESA Energy Saving"}</title>
-				<meta name="description" content={description || "Default description"} />
-				<meta name="keywords" content={keywords || "default, keywords"} />
+				<meta name="description" content={description || "VESA Energy Saving"} />
+				<meta name="keywords" content={keywords || "VESA Energy Saving"} />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<meta property="og:title" content={title || "VESA Energy Saving"} />
 				<meta
 					property="og:description"
-					content={description || "Default description"}
+					content={description || "VESA Energy Saving"}
 				/>
 				<meta property="og:type" content="website" />
 				<meta property="og:image" content="/images/shortcut.png" />
-				<meta property="og:url" content="https://vesaflow.com" />
+				<meta property="og:url" content="https://www.vesaflow.com" />
 				<meta name="twitter:card" content="summary_large_image" />
 				<meta name="twitter:title" content={title || "VESA Energy Saving"} />
 				<meta
 					name="twitter:description"
-					content={description || "Default description"}
+					content={description || "VESA Energy Saving"}
 				/>
 				<meta name="twitter:image" content="/path-to-your-default-image.jpg" />
 				<meta name="robots" content="index, follow" />
 				<meta name="language" content="English" />
 				<meta charSet="UTF-8" />
-				<link rel="canonical" href="https://vesaflow.com" />
+				<link rel="canonical" href="https://www.vesaflow.com" />
+				<link
+					rel="stylesheet"
+					href="https://cdn.ckeditor.com/ckeditor5/44.3.0/ckeditor5.css"
+				/>
 			</Head>
 
 			<section className="flex flex-col min-h-screen">

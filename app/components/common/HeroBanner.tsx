@@ -122,9 +122,9 @@ export default function HeroSection() {
 					ref={buttonsRef}
 					className="mt-6 flex flex-col sm:flex-row items-center gap-4 max-md:justify-center"
 				>
-					<Viewmore url="/" className="mr-4 max-sm:text-xl" text="View more" />
+					<Viewmore url="/about" className="mr-4 max-sm:text-xl" text="View more" />
 					<Link
-						href="/"
+						href="/contact"
 						className="flex items-center justify-center min-w-[150px] bg-[#111928] border rounded-full text-white px-4 py-2 text-base sm:text-lg font-medium hover:bg-[#637381] hover:border-[#637381]"
 					>
 						Contact

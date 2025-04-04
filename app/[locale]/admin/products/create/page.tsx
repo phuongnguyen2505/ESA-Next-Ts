@@ -29,7 +29,9 @@ type CreateProductForm = Omit<
 	| "file"
 	| "ngaytao"
 	| "ngaysua"
->;
+> & {
+	file: File | string | null;
+};
 
 export default function CreateProduct() {
 	const t = useTranslations("admin");
@@ -46,6 +48,7 @@ export default function CreateProduct() {
 		keywords_en: "",
 		description_en: "",
 		photo: "",
+		file: null,
 		stt: 1,
 		hienthi: 1,
 		noibat: 0,
@@ -296,6 +299,16 @@ export default function CreateProduct() {
 		}
 	};
 
+	const handleFileUploadSuccess = (result: any) => {
+		if (result.event === "success") {
+			const fileUrl = result.info.secure_url;
+			setFormData((prev) => ({
+				...prev,
+				file: fileUrl,
+			}));
+		}
+	};
+
 	return (
 		<AdminLayout pageName={t("addProduct")}>
 			<Modal
@@ -449,6 +462,37 @@ export default function CreateProduct() {
 				<div className="space-y-4">
 					<CldUploadWidget
 						uploadPreset="Vesa-Products"
+						signatureEndpoint="/api/signature?source=uw&upload_preset=Vesa-Products&folder=products/pdf"
+						options={{
+							maxFiles: 1,
+							sources: ["local", "url"],
+							folder: "products/pdf",
+							clientAllowedFormats: ["pdf"], // chỉ cho phép PDF (tuỳ chọn)
+						}}
+						onSuccess={handleFileUploadSuccess}
+					>
+						{({ open }) => (
+							<button
+								type="button"
+								onClick={() => open?.()}
+								className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+							>
+								{t("uploadFile")}
+							</button>
+						)}
+					</CldUploadWidget>
+
+					{/* Hiển thị tên file đã upload nếu có */}
+					{formData.file && (
+						<p className="mt-2 text-sm text-gray-700">
+							Uploaded file: {formData.file.toString()}
+						</p>
+					)}
+				</div>
+
+				<div className="space-y-4">
+					<CldUploadWidget
+						uploadPreset="Vesa-Products"
 						signatureEndpoint="/api/signature?source=uw&upload_preset=Vesa-Products&folder=products"
 						options={{
 							maxFiles: 1,
@@ -490,7 +534,9 @@ export default function CreateProduct() {
 				/>
 
 				<div className="flex justify-end space-x-4">
-					<Button type="submit">{t("save")}</Button>
+					<Button type="submit" className="bg-green-500 hover:bg-green-600">
+						{t("save")}
+					</Button>
 					<Button
 						type="button"
 						onClick={handleBack}

@@ -25,13 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 (name, email, subject, message, stt, ngaytao) 
                 VALUES (?, ?, ?, ?, 1, Now())
             `;
-
-            const result = await executeQuery(query, [
-                name,
-                email,
-                subject,
-                message,
-            ]);
+            const result = await executeQuery(query, [name, email, subject, message]);
             console.log("DB insert result:", result);
 
             return res.status(201).json({ message: "Contact form submitted successfully" });
@@ -39,8 +33,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.error("Error in contact form submission:", error);
             return res.status(500).json({ message: "Error submitting contact form" });
         }
+    } else if (req.method === "DELETE") {
+        try {
+            // Lấy id từ query, vd: /api/contacts?id=123
+            const { id } = req.query;
+            if (!id) {
+                return res.status(400).json({ message: "Missing contact id" });
+            }
+
+            const result = await executeQuery("DELETE FROM table_lienhe WHERE id = ?", [id]);
+            console.log("Deleted contact result:", result);
+            return res.status(200).json({ message: "Contact deleted successfully" });
+        } catch (error) {
+            console.error("Error deleting contact:", error);
+            return res.status(500).json({ message: "Error deleting contact" });
+        }
     } else {
-        res.setHeader("Allow", ["GET", "POST"]);
+        res.setHeader("Allow", ["GET", "POST", "DELETE"]);
         return res.status(405).json({ message: `Method ${req.method} not allowed` });
     }
 }

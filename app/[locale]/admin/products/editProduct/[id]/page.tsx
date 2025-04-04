@@ -18,6 +18,7 @@ import { ProductCat } from "@/types/productCat";
 import { useRouter } from "next/navigation";
 import UploadFile from "../../../components/Ui/UploadFile";
 import { CldUploadWidget } from "next-cloudinary";
+import GoogleDriveUploadButton from "@/app/components/Ui/DriveUpload";
 
 type EditProductForm = Omit<
 	Product,
@@ -286,6 +287,15 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 		}
 	};
 
+	const handleFileUploadSuccess = (result: any) => {
+		if (result && result.url) {
+			setFormData((prev) => ({
+				...prev,
+				file: result.url,
+			}));
+		}
+	};
+
 	return (
 		<AdminLayout pageName={t("editProduct")}>
 			<Modal
@@ -410,11 +420,14 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 					/>
 				</div>
 
-				<UploadFile
-					title={t("uploadFile")}
-					fileNames={formData.file ? [formData.file.toString()] : undefined}
-					onFileUpload={handleFileUpload}
-				/>
+				<div className="spave-y-4">
+					<GoogleDriveUploadButton onSuccess={handleFileUploadSuccess} />
+					{formData.file && (
+						<p className="mt-2 text-sm text-gray-700">
+							Uploaded file: {formData.file.toString()}
+						</p>
+					)}
+				</div>
 
 				{/* Cloudinary Upload cho ảnh */}
 				<div className="space-y-4">

@@ -33,22 +33,30 @@ export default function About() {
 	}, []);
 	return (
 		<ClientLayout>
-			<section className="container mx-auto px-4 md:px-6 py-20">
-				{abouts.length > 0
-					? abouts.map(
-						(about: { id: string; noidung_vi: string; noidung_en: string }) => (
-							<div key={about.id} className="flex flex-col">
-								<div
-									dangerouslySetInnerHTML={{
-										__html:
-											locale === "en" ? about.noidung_en : about.noidung_vi,
-									}}
-								/>
-							</div>
-						),
-					)
-					: null}
-			</section>
+			<div className="relative w-full bg-gradient-to-b rounded-lg from-gray-50 to-gray-100 overflow-hidden">
+				<section className="container mx-auto px-4 md:px-6 py-4 md:py-6">
+					{abouts.length > 0
+						? abouts.map(
+								(about: {
+									id: string;
+									noidung_vi: string;
+									noidung_en: string;
+								}) => (
+									<div key={about.id} className="flex flex-col">
+										<div
+											dangerouslySetInnerHTML={{
+												__html:
+													locale === "en"
+														? about.noidung_en
+														: about.noidung_vi,
+											}}
+										/>
+									</div>
+								),
+						  )
+						: null}
+				</section>
+			</div>
 		</ClientLayout>
 	);
 }

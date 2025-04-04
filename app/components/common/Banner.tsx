@@ -62,7 +62,7 @@ export default function Banner({}: BannerProps) {
 	return (
 		<section className="relative bg-gradient-to-br from-[#1e1e2f] to-[#0d0d1a] overflow-hidden rounded-t-2xl px-6 py-12 sm:px-8 sm:py-16">
 			{/* Hiệu ứng nền trang trí */}
-			<div className="absolute inset-0 bg-[url('/patterns/diagonal-lines.png')] opacity-20" />
+			<div className="absolute inset-0 opacity-20" />
 
 			{/* Nội dung chính */}
 			<div className="relative z-10 max-w-7xl mx-auto text-left">
