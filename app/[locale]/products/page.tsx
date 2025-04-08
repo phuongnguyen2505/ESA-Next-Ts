@@ -304,6 +304,9 @@ export default function Products() {
 							>
 								{paginatedProducts
 									.filter((product) => product.hienthi === 1)
+									.sort((a, b) =>
+										a.ten_en.toLowerCase().localeCompare(b.ten_en.toLowerCase()),
+									)
 									.map((product) => (
 										<ProductCard
 											key={product.id}

@@ -133,8 +133,6 @@ export default function ProductDetailPage() {
 						<span className="text-blue-600">{product.list_ten_en}</span>
 						<span className="mx-2">/</span>
 						<span className="font-semibold">{product.cat_ten_en}</span>
-						{/* <span className="mx-2">/</span>
-						<span className="font-semibold">{product.ten_en}</span> */}
 					</nav>
 					{/* Main content */}
 					<div className="flex flex-col md:flex-row gap-8">
@@ -153,14 +151,14 @@ export default function ProductDetailPage() {
 							/>
 						</div>
 						{/* Right: Details */}
-						<div className="space-y-6">
+						<div className="space-y-6 md:w-3/5">
 							{product.noibat === 1 && (
 								<span className="bg-red-500 text-white px-2 py-1 rounded-md text-sm">
 									Featured
 								</span>
 							)}
-							<h1 className="text-4xl font-bold flex items-center gap-6">
-								{product.ten_en}{" "}
+							<h1 className="text-4xl font-bold flex items-center gap-6 text-blue-600">
+								{product.ten_en}
 							</h1>
 							<p className="text-lg text-gray-600">{product.mota_en}</p>
 							<span className="text-sm text-gray-500">
