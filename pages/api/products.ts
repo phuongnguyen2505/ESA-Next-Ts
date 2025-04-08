@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
              FROM table_product p
              LEFT JOIN table_product_list pl ON p.id_list = pl.id
              LEFT JOIN table_product_cat pc ON p.id_cat = pc.id
-             ORDER BY p.stt ASC, p.id DESC`,
+             ORDER BY p.ten_en ASC, p.id DESC`,
 					(err, results) => {
 						if (err) reject(err);
 						else resolve(results);

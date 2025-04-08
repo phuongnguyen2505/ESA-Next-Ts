@@ -106,19 +106,37 @@ export default function Products() {
 	// Lọc, sắp xếp sản phẩm
 	useEffect(() => {
 		let updated = [...products];
+
+		// Lọc theo danh mục nếu có chọn
 		if (selectedCategories.length > 0) {
 			updated = updated.filter(
 				(p) => p.list_ten_en && selectedCategories.includes(p.list_ten_en),
 			);
 		}
+
+		// Lọc theo dòng sản phẩm nếu có chọn
 		if (selectedProductLines.length > 0) {
 			updated = updated.filter(
 				(p) => p.cat_ten_en && selectedProductLines.includes(p.cat_ten_en),
 			);
 		}
+
+		// Lọc theo sản phẩm nổi bật nếu có chọn
 		if (featuredOnly) {
 			updated = updated.filter((p) => p.noibat === 1);
 		}
+
+		// Lọc theo từ khóa tìm kiếm nếu có nhập
+		if (searchQuery) {
+			updated = updated.filter(
+				(product) =>
+					product.ten_en.toLowerCase().includes(searchQuery.toLowerCase()) ||
+					(product.masp &&
+						product.masp.toLowerCase().includes(searchQuery.toLowerCase())),
+			);
+		}
+
+		// Sắp xếp theo giá trị sortOrder
 		updated.sort((a, b) => {
 			switch (sortOrder) {
 				case "asc":
@@ -132,20 +150,19 @@ export default function Products() {
 				case "mostViewed":
 					return (b.luotxem || 0) - (a.luotxem || 0);
 				default:
-					return 0;
+					return a.ten_en.toLowerCase().localeCompare(b.ten_en.toLowerCase());
 			}
 		});
+
 		setFilteredProducts(updated);
-		// GSAP animation cho product cards
-		const cards = document.querySelectorAll(".product-card");
-		if (cards.length > 0) {
-			gsap.fromTo(
-				cards,
-				{ opacity: 0, y: 20 },
-				{ opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: "power3.out" },
-			);
-		}
-	}, [selectedCategories, selectedProductLines, featuredOnly, sortOrder, products]);
+	}, [
+		products,
+		selectedCategories,
+		selectedProductLines,
+		featuredOnly,
+		searchQuery,
+		sortOrder,
+	]);
 
 	// Animation khi load sản phẩm
 	useEffect(() => {
@@ -193,7 +210,6 @@ export default function Products() {
 		[filteredProducts, currentPage, itemsPerPage],
 	);
 
-	// Một số hàm tiện ích
 	const truncateTitle = (text: string, maxLength: number = 35) => {
 		if (text.length <= maxLength) return text;
 		let sub = text.slice(0, maxLength);
@@ -304,9 +320,6 @@ export default function Products() {
 							>
 								{paginatedProducts
 									.filter((product) => product.hienthi === 1)
-									.sort((a, b) =>
-										a.ten_en.toLowerCase().localeCompare(b.ten_en.toLowerCase()),
-									)
 									.map((product) => (
 										<ProductCard
 											key={product.id}
